@@ -9,7 +9,26 @@ generator client {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String
+  id                  String         @id @default(uuid()) @db.Uuid
+  name                String         @db.VarChar(255)
+  email               String         @unique @db.VarChar(255)
+  phoneNumber         String?        @db.VarChar(20)
+  passwordHash        String         @db.Text
+  role                Role
+  verificationStatus  VerificationStatus
+  twoFactorEnabled    Boolean        @default(false)
+  createdAt           DateTime       @default(now()) @db.Timestamp(0)
+  updatedAt           DateTime       @updatedAt @db.Timestamp(0)
+}
+
+enum Role {
+  CLIENT      // A user who posts jobs or hires freelancers
+  FREELANCER  // A user who applies for and works on jobs
+  ADMIN       // A user with administrative privileges
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
 }
