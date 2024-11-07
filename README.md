@@ -81,6 +81,9 @@ If you make changes to your Prisma schema and need to regenerate the Prisma clie
 
 ```docker-compose run backend npx prisma generate```
 
+Apply migrations to your DB
+```docker-compose run backend npx prisma migrate dev --name init```
+
 ## Endpoints
 - GET / - Returns a greeting message from the Express server.
 - Add additional API endpoints here as your application grows.
