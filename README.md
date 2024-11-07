@@ -68,7 +68,7 @@ The frontend React application will be available at http://localhost:3000.
 4. **Accessing the Application:**
 
 Open your web browser and navigate to ```http://localhost:3000``` to view the React frontend.
-Use tools like Postman or cURL to interact with the API at ```http://localhost:5000.```
+Use tools like Postman or cURL to interact with the API at ```http://localhost:8000.```
 
 5. **Stopping the Application:**
 
