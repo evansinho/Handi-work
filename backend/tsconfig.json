@@ -1,20 +1,3 @@
-// {
-//   "compilerOptions": {
-//     "target": "ES6",
-//     "module": "commonjs", // Use "commonjs" or "ESNext"
-//     "moduleResolution": "node",
-//     "outDir": "./dist",
-//     "rootDir": "./src",
-//     "strict": true,
-//     "esModuleInterop": true,
-//     "skipLibCheck": true
-//   },
-//   "ts-node": {
-//     "esm": true
-//   },
-//   "include": ["src/**/*.ts"],
-//   "exclude": ["node_modules"]
-// }
 {
   "compilerOptions": {
     "module": "commonjs",   // Use "commonjs" for Node compatibility
@@ -23,7 +6,7 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
