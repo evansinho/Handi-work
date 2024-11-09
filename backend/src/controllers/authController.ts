@@ -1,10 +1,9 @@
-import express, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { PrismaClient, User } from '@prisma/client';
 import Joi from 'joi';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const router = express.Router();
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '1h';
@@ -22,8 +21,8 @@ const userSchema = Joi.object({
   twoFactorEnabled: Joi.boolean().default(false),
 });
 
-// Registration endpoint
-router.post('/register', async (req: Request, res: Response) => {
+// Registration controller
+export const registerUser = async (req: Request, res: Response) => {
   const { error } = userSchema.validate(req.body);
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
@@ -90,6 +89,4 @@ router.post('/register', async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({ message: 'An error occurred during registration.' });
   }
-});
-
-export default router;
+};

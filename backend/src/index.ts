@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cors());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-app.use(routes);
+app.use('/api', routes);
 // test middlewares [roleChecker and auth]
 // app.get('/admin-dashboard', authMiddleware, roleCheck([Role.ADMIN]), async (req, res) => {
 //   try {
