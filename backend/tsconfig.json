@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "commonjs",   // Use "commonjs" for Node compatibility
+    "module": "commonjs", // Use "commonjs" for Node compatibility
     "target": "es6",
     "outDir": "./dist",
     "strict": true,
@@ -8,6 +8,6 @@
     "skipLibCheck": true,
     "types": ["node", "jest"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "jest.config.ts"],
   "exclude": ["node_modules"]
 }

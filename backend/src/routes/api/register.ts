@@ -1,10 +1,13 @@
 import express, { Request, Response } from 'express';
 import { PrismaClient, User } from '@prisma/client';
-import Joi from "joi";
-import bcrypt  from "bcryptjs";
+import Joi from 'joi';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 const prisma = new PrismaClient();
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
+const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '1h';
 
 // Validation schema using Joi
 const userSchema = Joi.object({
@@ -12,8 +15,10 @@ const userSchema = Joi.object({
   email: Joi.string().email().required(),
   phoneNumber: Joi.string().min(10).max(20).optional(),
   password: Joi.string().min(6).required(),
-  role: Joi.string().valid("CLIENT", "FREELANCER", "ADMIN").required(),
-  verificationStatus: Joi.string().valid("PENDING", "VERIFIED", "REJECTED").required(),
+  role: Joi.string().valid('CLIENT', 'FREELANCER', 'ADMIN').required(),
+  verificationStatus: Joi.string()
+    .valid('PENDING', 'VERIFIED', 'REJECTED')
+    .required(),
   twoFactorEnabled: Joi.boolean().default(false),
 });
 
@@ -24,7 +29,15 @@ router.post('/register', async (req: Request, res: Response) => {
     return res.status(400).json({ message: error.details[0].message });
   }
 
-  const { name, email, phoneNumber, password, role, verificationStatus, twoFactorEnabled } = req.body;
+  const {
+    name,
+    email,
+    phoneNumber,
+    password,
+    role,
+    verificationStatus,
+    twoFactorEnabled,
+  } = req.body;
 
   try {
     if (role === 'error') {
@@ -52,9 +65,14 @@ router.post('/register', async (req: Request, res: Response) => {
       },
     });
 
+    const token = jwt.sign({ id: newUser.id, role: newUser.role }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRATION,
+    });
+
     // Send the response with the created user
     res.status(201).json({
       message: 'User registered successfully',
+      token,
       user: {
         id: newUser.id,
         name: newUser.name,
