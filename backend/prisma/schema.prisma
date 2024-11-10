@@ -17,6 +17,7 @@ model User {
   role                Role
   verificationStatus  VerificationStatus
   twoFactorEnabled    Boolean        @default(false)
+  twoFactorSecret     String?        @db.Text // stores the secret for TOTP
   createdAt           DateTime       @default(now()) @db.Timestamp(0)
   updatedAt           DateTime       @updatedAt @db.Timestamp(0)
 }
