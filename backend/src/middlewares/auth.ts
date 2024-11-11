@@ -27,7 +27,6 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
       token,
       process.env.JWT_SECRET as string
     ) as UserPayload;
-    console.log('Decoded JWT payload:', decoded);
     req.user = decoded;
     next();
   } catch (error) {
