@@ -360,3 +360,121 @@
  *                   type: string
  *                   example: An error occurred while deleting the user
  */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Job:
+ *       type: object
+ *       required:
+ *         - title
+ *         - description
+ *         - category
+ *         - location
+ *         - budgetMin
+ *         - budgetMax
+ *         - status
+ *       properties:
+ *         title:
+ *           type: string
+ *           description: The job's title
+ *         description:
+ *           type: string
+ *           description: A detailed description of the job
+ *         category:
+ *           type: string
+ *           description: The category of the job (e.g., Web Development, Design)
+ *         location:
+ *           type: string
+ *           description: Job location (Remote or On-site)
+ *         budgetMin:
+ *           type: number
+ *           description: The minimum budget for the job
+ *         budgetMax:
+ *           type: number
+ *           description: The maximum budget for the job
+ *         status:
+ *           type: string
+ *           enum: [PENDING, ACTIVE, COMPLETED, DISPUTED]
+ *           description: The status of the job
+ *       example:
+ *         title: "Website Development"
+ *         description: "Looking for a developer to build a company website"
+ *         category: "Web Development"
+ *         location: "Remote"
+ *         budgetMin: 500
+ *         budgetMax: 1500
+ *         status: "PENDING"
+ */
+
+/**
+ * @swagger
+ * /api/jobs/all:
+ *   get:
+ *     summary: Retrieve a list of all jobs
+ *     tags: [Job]
+ *     responses:
+ *       200:
+ *         description: List of jobs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Job'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while retrieving jobs
+ */
+
+/**
+ * @swagger
+ * /api/jobs:
+ *   get:
+ *     summary: Retrieve jobs filtered by status
+ *     tags: [Job]
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [PENDING, ACTIVE, COMPLETED, DISPUTED]
+ *         description: Filter jobs by status
+ *     responses:
+ *       200:
+ *         description: List of filtered jobs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Job'
+ *       400:
+ *         description: Invalid status parameter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid status parameter
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while retrieving jobs by status
+ */
