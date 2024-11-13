@@ -19,6 +19,10 @@ import {
   approveFreelancerProfile,
   rejectFreelancerProfile,
 } from '../controllers/freelanceProfileController';
+import {
+  getUserActivityMetrics,
+  getAppPerformanceMetrics,
+} from '../controllers/metricsController';
 
 const router = express.Router();
 
@@ -43,6 +47,18 @@ router.post(
   authMiddleware,
   roleCheck([Role.ADMIN]),
   rejectFreelancerProfile
+);
+router.get(
+  '/metrics/user-activity',
+  authMiddleware,
+  roleCheck([Role.ADMIN]),
+  getUserActivityMetrics
+);
+router.get(
+  '/metrics/app-performance',
+  authMiddleware,
+  roleCheck([Role.ADMIN]),
+  getAppPerformanceMetrics
 );
 
 export default router;
