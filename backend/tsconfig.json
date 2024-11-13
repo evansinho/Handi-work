@@ -8,6 +8,10 @@
     "skipLibCheck": true,
     "types": ["node", "jest"]
   },
-  "include": ["src/**/*.ts", "jest.config.ts", "prisma/seed.ts"],
+  "include": [
+    "src/**/*.ts",
+    "jest.config.ts", 
+    // "prisma/seed.ts"
+  ],
   "exclude": ["node_modules"]
 }

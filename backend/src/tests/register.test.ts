@@ -10,7 +10,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await prisma.user.deleteMany(); // Clean up users after tests
+  await prisma.user.deleteMany();
   await prisma.$disconnect();
 });
 

@@ -8,38 +8,11 @@ generator client {
   binaryTargets = ["native", "darwin-arm64", "linux-arm64-openssl-3.0.x"]
 }
 
-model User {
-  id                  String         @id @default(uuid()) @db.Uuid
-  name                String         @db.VarChar(255)
-  email               String         @unique @db.VarChar(255)
-  phoneNumber         String?        @db.VarChar(20)
-  passwordHash        String         @db.Text
-  role                Role
-  verificationStatus  VerificationStatus
-  twoFactorEnabled    Boolean        @default(false)
-  twoFactorSecret     String?        @db.Text // stores the secret for TOTP
-  createdAt           DateTime       @default(now()) @db.Timestamp(0)
-  updatedAt           DateTime       @updatedAt @db.Timestamp(0)
-}
-
-model Job {
-  id             String       @id @default(uuid()) @db.Uuid
-  clientId       String       @db.Uuid
-  title          String       @db.VarChar(255)
-  description    String?      @db.Text
-  category       String       @db.VarChar(255)
-  location       String?      @db.VarChar(255)
-  budgetMin      Decimal      @db.Decimal(10, 2)
-  budgetMax      Decimal      @db.Decimal(10, 2)
-  status         JobStatus
-  createdAt      DateTime     @default(now()) @db.Timestamp(0)
-  updatedAt      DateTime     @updatedAt @db.Timestamp(0)
-}
-
+// Define enums first for use across models
 enum Role {
-  CLIENT      // A user who posts jobs or hires freelancers
-  FREELANCER  // A user who applies for and works on jobs
-  ADMIN       // A user with administrative privileges
+  CLIENT
+  FREELANCER
+  ADMIN
 }
 
 enum VerificationStatus {
@@ -48,9 +21,216 @@ enum VerificationStatus {
   REJECTED
 }
 
+enum SkillLevel {
+  APPRENTICE
+  JOURNEYMAN
+  MASTER
+}
+
+enum ProposalStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  ESCROW
+}
+
 enum JobStatus {
   PENDING
   ACTIVE
   COMPLETED
   DISPUTED
+}
+
+enum PaymentMethod {
+  CARD
+  MOBILE
+  MONEY
+  BANK_TRANSFER
+}
+
+// Define all models
+model User {
+  id                 String             @id @default(uuid()) @db.Uuid
+  name               String             @db.VarChar(255)
+  email              String             @unique @db.VarChar(255)
+  phoneNumber        String?            @db.VarChar(20)
+  passwordHash       String             @db.Text
+  role               Role
+  verificationStatus VerificationStatus
+  twoFactorEnabled   Boolean            @default(false)
+  twoFactorSecret    String?
+  createdAt          DateTime           @default(now()) @db.Timestamp(0)
+  updatedAt          DateTime           @updatedAt @db.Timestamp(0)
+
+  // Relations
+  freelancerProfile FreelancerProfile?
+  clientProfile     ClientProfile?
+  proposals         Proposal[]
+  contracts         Contract[]
+  ratingsGiven      Rating[]           @relation("RatingsGiven")
+  ratingsReceived   Rating[]           @relation("RatingsReceived")
+  notifications     Notification[]
+  adminActivities   AdminActivity[]
+
+  @@map("users")
+}
+
+model FreelancerProfile {
+  id         String     @id @default(uuid()) @db.Uuid
+  userId     String     @unique @db.Uuid
+  bio        String?    @db.Text
+  category   String     @db.VarChar(255)
+  skillLevel SkillLevel
+  portfolio  String?    @db.Text
+  hourlyRate Decimal    @db.Decimal(10, 2)
+  available  Boolean    @default(true)
+  ratingsAvg Decimal?   @db.Decimal(3, 2)
+  verified   Boolean    @default(false)
+
+  // Relations
+  user     User       @relation(fields: [userId], references: [id])
+  Proposal Proposal[]
+  Contract Contract[]
+
+  @@map("freelancer_profile")
+}
+
+model ClientProfile {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @unique @db.Uuid
+  businessName String?  @db.VarChar(255)
+  jobPostCount Int      @default(0)
+  ratingAvg    Decimal? @db.Decimal(3, 2)
+
+  // Relations
+  user User  @relation(fields: [userId], references: [id])
+  Job  Job[]
+
+  @@map("client_profile")
+}
+
+model Job {
+  id          String    @id @default(uuid()) @db.Uuid
+  clientId    String    @db.Uuid
+  title       String    @db.VarChar(255)
+  description String?   @db.Text
+  category    String    @db.VarChar(255)
+  location    String?   @db.VarChar(255)
+  budgetMin   Decimal   @db.Decimal(10, 2)
+  budgetMax   Decimal   @db.Decimal(10, 2)
+  status      JobStatus
+  createdAt   DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt   DateTime  @updatedAt @db.Timestamp(0)
+
+  // Relations
+  client    ClientProfile @relation(fields: [clientId], references: [id])
+  proposals Proposal[]
+  contracts Contract[]
+  ratings   Rating[]
+  payments  Payment[]
+
+  @@map("jobs")
+}
+
+model Proposal {
+  id           String         @id @default(uuid()) @db.Uuid
+  jobId        String         @db.Uuid
+  freelancerId String         @db.Uuid
+  proposalText String?        @db.Text
+  proposedRate Decimal        @db.Decimal(10, 2)
+  status       ProposalStatus
+  createdAt    DateTime       @default(now()) @db.Timestamp(0)
+
+  // Relations
+  job        Job               @relation(fields: [jobId], references: [id])
+  freelancer FreelancerProfile @relation(fields: [freelancerId], references: [id])
+  User       User?             @relation(fields: [userId], references: [id])
+  userId     String?           @db.Uuid
+
+  @@map("proposals")
+}
+
+model Contract {
+  id             String        @id @default(uuid()) @db.Uuid
+  jobId          String        @db.Uuid
+  freelancerId   String        @db.Uuid
+  agreedRate     Decimal       @db.Decimal(10, 2)
+  paymentStatus  PaymentStatus
+  milestoneCount Int
+  startDate      DateTime
+  endDate        DateTime?
+
+  // Relations
+  job        Job               @relation(fields: [jobId], references: [id])
+  freelancer FreelancerProfile @relation(fields: [freelancerId], references: [id])
+  payments   Payment[]
+  User       User?             @relation(fields: [userId], references: [id])
+  userId     String?           @db.Uuid
+
+  @@map("contracts")
+}
+
+model Rating {
+  id         String   @id @default(uuid()) @db.Uuid
+  jobId      String   @db.Uuid
+  fromUserId String   @db.Uuid
+  toUserId   String   @db.Uuid
+  rating     Decimal  @db.Decimal(2, 1)
+  review     String?  @db.Text
+  createdAt  DateTime @default(now()) @db.Timestamp(0)
+
+  // Relations
+  job      Job  @relation(fields: [jobId], references: [id])
+  fromUser User @relation("RatingsGiven", fields: [fromUserId], references: [id])
+  toUser   User @relation("RatingsReceived", fields: [toUserId], references: [id])
+
+  @@map("ratings")
+}
+
+model Payment {
+  id            String        @id @default(uuid()) @db.Uuid
+  jobId         String        @db.Uuid
+  contractId    String        @db.Uuid
+  amount        Decimal       @db.Decimal(10, 2)
+  currency      String        @db.VarChar(3)
+  paymentMethod PaymentMethod
+  paymentStatus PaymentStatus
+  createdAt     DateTime      @default(now()) @db.Timestamp(0)
+
+  // Relations
+  job      Job      @relation(fields: [jobId], references: [id])
+  contract Contract @relation(fields: [contractId], references: [id])
+
+  @@map("payments")
+}
+
+model AdminActivity {
+  id        String   @id @default(uuid()) @db.Uuid
+  adminId   String   @db.Uuid
+  action    String   @db.Text
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+
+  // Relations
+  admin User @relation(fields: [adminId], references: [id])
+
+  @@map("admin_activities")
+}
+
+model Notification {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @db.Uuid
+  notificationType String   @db.VarChar(255)
+  message          String?  @db.Text
+  readStatus       Boolean  @default(false)
+  createdAt        DateTime @default(now()) @db.Timestamp(0)
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
 }
