@@ -363,6 +363,122 @@
 
 /**
  * @swagger
+ * /api/freelancer-profile/approve/{userId}:
+ *   post:
+ *     summary: Approve a freelancer's profile
+ *     tags: [Freelancer Profile]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the freelancer to approve
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Freelancer profile approved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Freelancer profile approved successfully
+ *       403:
+ *         description: Unauthorized action, admin role required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: You do not have permission to approve freelancer profiles
+ *       404:
+ *         description: Freelancer not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Freelancer not found
+ *       500:
+ *         description: Server error during approval process
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while approving the freelancer profile
+ */
+
+/**
+ * @swagger
+ * /api/freelancer-profile/reject/{userId}:
+ *   post:
+ *     summary: Reject a freelancer's profile
+ *     tags: [Freelancer Profile]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the freelancer to reject
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Freelancer profile rejected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Freelancer profile rejected successfully
+ *       403:
+ *         description: Unauthorized action, admin role required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: You do not have permission to reject freelancer profiles
+ *       404:
+ *         description: Freelancer not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Freelancer not found
+ *       500:
+ *         description: Server error during rejection process
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while rejecting the freelancer profile
+ */
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     Job:

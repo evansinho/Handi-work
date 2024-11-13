@@ -30,10 +30,28 @@ describe('Jobs API', () => {
   // Before each test, clear the database and insert sample data
   beforeAll(async () => {
     await prisma.job.deleteMany();
+    // Seed sample users
+    const user = await prisma.user.create({
+      data: {
+        name: 'Alice Johnson',
+        email: 'alice.johnson@example.com',
+        passwordHash: 'hashedpassword',
+        role: 'CLIENT',
+        verificationStatus: 'VERIFIED',
+      },
+    });
+    // Seed sample clients
+    const client = await prisma.clientProfile.create({
+      data: {
+        id: uuidv4(),
+        userId: user.id,
+        businessName: 'Sample Client',
+      },
+    });
     await prisma.job.createMany({
       data: [
         {
-          clientId: uuidv4(),
+          clientId: client.id,
           title: 'Job Title 1',
           description: 'Job Description for Job 1',
           category: 'Web Development',
@@ -43,7 +61,7 @@ describe('Jobs API', () => {
           status: 'PENDING',
         },
         {
-          clientId: uuidv4(),
+          clientId: client.id,
           title: 'Job Title 2',
           description: 'Job Description for Job 2',
           category: 'Graphic Design',
@@ -53,7 +71,7 @@ describe('Jobs API', () => {
           status: 'ACTIVE',
         },
         {
-          clientId: uuidv4(),
+          clientId: client.id,
           title: 'Job Title 3',
           description: 'Job Description for Job 3',
           category: 'Mobile App Development',
@@ -63,7 +81,7 @@ describe('Jobs API', () => {
           status: 'COMPLETED',
         },
         {
-          clientId: uuidv4(),
+          clientId: client.id,
           title: 'Job Title 4',
           description: 'Job Description for Job 4',
           category: 'Digital Marketing',

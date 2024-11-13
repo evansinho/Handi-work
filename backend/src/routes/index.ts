@@ -14,6 +14,10 @@ import { getAllJobs, filterJobByStatus } from '../controllers/jobController';
 import roleCheck from '../middlewares/roleCheck';
 import { Role } from '@prisma/client';
 import authMiddleware from '../middlewares/auth';
+import {
+  approveFreelancerProfile,
+  rejectFreelancerProfile,
+} from '../controllers/freelanceProfileController';
 
 const router = express.Router();
 
@@ -26,5 +30,17 @@ router.put('/user/:id', authMiddleware, roleCheck([Role.ADMIN]), updateUser);
 router.delete('/user/:id', authMiddleware, roleCheck([Role.ADMIN]), deleteUser);
 router.get('/jobs/all', authMiddleware, roleCheck([Role.ADMIN]), getAllJobs);
 router.get('/jobs', authMiddleware, roleCheck([Role.ADMIN]), filterJobByStatus);
+router.post(
+  '/freelancer-profile/approve/:userId',
+  authMiddleware,
+  roleCheck([Role.ADMIN]),
+  approveFreelancerProfile
+);
+router.post(
+  '/freelancer-profile/reject/:userId',
+  authMiddleware,
+  roleCheck([Role.ADMIN]),
+  rejectFreelancerProfile
+);
 
 export default router;
