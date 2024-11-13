@@ -198,7 +198,7 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     // Check if two-factor authentication is enabled
-    if (user.twoFactorEnabled) {
+    if (!user.twoFactorEnabled) {
       return res.json({
         message: 'Two-factor authentication required',
         twoFactorEnabled: true,
