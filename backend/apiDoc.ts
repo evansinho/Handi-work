@@ -93,6 +93,67 @@
 
 /**
  * @swagger
+ * /api/login:
+ *   post:
+ *     summary: User login to receive a JWT token
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The user's email address
+ *               password:
+ *                 type: string
+ *                 description: The user's password
+ *             required:
+ *               - email
+ *               - password
+ *             example:
+ *               email: johndoe@example.com
+ *               password: password123
+ *     responses:
+ *       200:
+ *         description: Login successful and JWT token returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Login successful
+ *                 token:
+ *                   type: string
+ *                   description: The JWT token used for subsequent requests
+ *       401:
+ *         description: Invalid credentials or incorrect password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid email or password
+ *       500:
+ *         description: Server error during login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred during login
+ */
+
+/**
+ * @swagger
  * /api/2fa/setup:
  *   post:
  *     summary: Set up two-factor authentication for a user

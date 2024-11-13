@@ -3,6 +3,7 @@ import {
   registerUser,
   setup2FA,
   verify2FA,
+  loginUser,
 } from '../controllers/authController';
 import {
   getUsers,
@@ -21,6 +22,7 @@ import {
 
 const router = express.Router();
 
+router.post('/login', loginUser);
 router.post('/register', registerUser);
 router.post('/2fa/setup', setup2FA);
 router.post('/2fa/verify', verify2FA);
