@@ -1,20 +1,22 @@
 import express from 'express';
+import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocs from '../swaggerDoc';
 import { PrismaClient } from '@prisma/client';
-import authRoutes from './routes/authRoutes';
+import routes from './routes/index';
 
-const app = express();
+export const app = express();
 const prisma = new PrismaClient();
 
 app.use(express.json());
 
-app.get('/users', async (req, res) => {
-  const users = await prisma.user.findMany();
-  res.json(users);
-});
+app.use(cors())
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-app.use('/auth', authRoutes);
+app.use(routes);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
 });
