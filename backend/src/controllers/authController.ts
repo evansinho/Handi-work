@@ -23,6 +23,12 @@ const userSchema = Joi.object({
   twoFactorEnabled: Joi.boolean().default(false),
 });
 
+// Validation schema for login using Joi
+const loginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+});
+
 // Registration controller
 export const registerUser = async (req: Request, res: Response) => {
   const { error } = userSchema.validate(req.body);
@@ -162,5 +168,64 @@ export const verify2FA = async (req: Request, res: Response) => {
     res.json({ message: '2FA code verified successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error verifying 2FA code', error });
+  }
+};
+
+// Login controller
+export const loginUser = async (req: Request, res: Response) => {
+  // Validate the request body
+  const { error } = loginSchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
+  const { email, password } = req.body;
+
+  try {
+    // Find the user in the database
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Verify the password
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Check if two-factor authentication is enabled
+    if (user.twoFactorEnabled) {
+      return res.json({
+        message: 'Two-factor authentication required',
+        twoFactorEnabled: true,
+        userId: user.id,
+      });
+    }
+
+    // Generate a JWT token
+    const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRATION,
+    });
+
+    // Respond with the token and user details
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        verificationStatus: user.verificationStatus,
+        twoFactorEnabled: user.twoFactorEnabled,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'An error occurred during login' });
   }
 };
