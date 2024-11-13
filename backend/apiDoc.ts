@@ -655,3 +655,177 @@
  *                   type: string
  *                   example: An error occurred while retrieving jobs by status
  */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UserActivityMetrics:
+ *       type: object
+ *       required:
+ *         - totalUsers
+ *         - newSignups
+ *         - freelancerProfilesCreated
+ *         - clientProfilesCreated
+ *         - jobPosts
+ *         - proposalsSubmitted
+ *         - contractsCompleted
+ *       properties:
+ *         totalUsers:
+ *           type: string
+ *           description: The total number of users in the system
+ *         newSignups:
+ *           type: string
+ *           description: The number of new signups within the specified date range
+ *         freelancerProfilesCreated:
+ *           type: string
+ *           description: The number of freelancer profiles created
+ *         clientProfilesCreated:
+ *           type: string
+ *           description: The number of client profiles created
+ *         jobPosts:
+ *           type: string
+ *           description: The number of job posts created
+ *         proposalsSubmitted:
+ *           type: string
+ *           description: The number of proposals submitted by users
+ *         contractsCompleted:
+ *           type: string
+ *           description: The number of contracts that have been completed
+ *       example:
+ *         totalUsers: "1000"
+ *         newSignups: "150"
+ *         freelancerProfilesCreated: "200"
+ *         clientProfilesCreated: "100"
+ *         jobPosts: "300"
+ *         proposalsSubmitted: "500"
+ *         contractsCompleted: "100"
+ *     AppPerformanceMetrics:
+ *       type: object
+ *       required:
+ *         - pendingJobs
+ *         - activeJobs
+ *         - completedJobs
+ *         - disputedJobs
+ *         - pendingPayments
+ *         - paidPayments
+ *         - escrowPayments
+ *         - averageRating
+ *         - totalContracts
+ *         - completedContracts
+ *         - activeContracts
+ *       properties:
+ *         pendingJobs:
+ *           type: string
+ *           description: The number of pending jobs in the system
+ *         activeJobs:
+ *           type: string
+ *           description: The number of active jobs
+ *         completedJobs:
+ *           type: string
+ *           description: The number of completed jobs
+ *         disputedJobs:
+ *           type: string
+ *           description: The number of disputed jobs
+ *         pendingPayments:
+ *           type: string
+ *           description: The number of payments that are pending
+ *         paidPayments:
+ *           type: string
+ *           description: The number of payments that have been paid
+ *         escrowPayments:
+ *           type: string
+ *           description: The number of escrow payments
+ *         averageRating:
+ *           type: number
+ *           format: float
+ *           description: The average rating of the platform's users
+ *         totalContracts:
+ *           type: string
+ *           description: The total number of contracts
+ *         completedContracts:
+ *           type: string
+ *           description: The number of completed contracts
+ *         activeContracts:
+ *           type: string
+ *           description: The number of active contracts
+ *       example:
+ *         pendingJobs: "50"
+ *         activeJobs: "200"
+ *         completedJobs: "300"
+ *         disputedJobs: "10"
+ *         pendingPayments: "100"
+ *         paidPayments: "200"
+ *         escrowPayments: "50"
+ *         averageRating: 4.5
+ *         totalContracts: "1000"
+ *         completedContracts: "800"
+ *         activeContracts: "150"
+ */
+
+/**
+ * @swagger
+ * /metrics/user-activity:
+ *   get:
+ *     summary: Get user activity metrics within a specified date range
+ *     tags: [Metrics]
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: The start date for the date range (YYYY-MM-DD)
+ *       - in: query
+ *         name: endDate
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: The end date for the date range (YYYY-MM-DD)
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user activity metrics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/UserActivityMetrics'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /metrics/app-performance:
+ *   get:
+ *     summary: Get app performance metrics
+ *     tags: [Metrics]
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved app performance metrics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AppPerformanceMetrics'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
