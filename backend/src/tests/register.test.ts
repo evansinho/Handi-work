@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 
 beforeAll(async () => {
   await prisma.$connect();
+  jest.clearAllMocks();
 });
 
 afterAll(async () => {
@@ -15,6 +16,14 @@ afterAll(async () => {
 });
 
 describe('User Registration Endpoint', () => {
+  beforeEach(async () => {
+    await prisma.user.deleteMany({});
+  });
+
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
   it('should successfully register a new user', async () => {
     const response = await request(app).post('/api/register').send({
       name: 'John Doe',
@@ -39,15 +48,6 @@ describe('User Registration Endpoint', () => {
       verificationStatus: 'PENDING',
       twoFactorEnabled: false,
     });
-  });
-
-  beforeEach(async () => {
-    // Clear the test database
-    await prisma.user.deleteMany({});
-  });
-
-  afterAll(async () => {
-    await prisma.$disconnect();
   });
 
   it('should return 400 if email is already in use', async () => {
@@ -91,6 +91,6 @@ describe('User Registration Endpoint', () => {
     });
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty('message'); // Joi validation error message
+    expect(response.body).toHaveProperty('message');
   });
 });

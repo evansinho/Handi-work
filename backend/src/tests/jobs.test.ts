@@ -1,19 +1,31 @@
 import request from 'supertest';
 import { PrismaClient, Role, VerificationStatus } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
 import { app } from '../index';
 
 const prisma = new PrismaClient();
 
-describe('Jobs API', () => {
-  beforeAll(async () => {
-    await prisma.user.deleteMany({});
-  });
+beforeAll(async () => {
+  await prisma.job.deleteMany();
+  await prisma.clientProfile.deleteMany();
+  await prisma.user.deleteMany();
+  jest.clearAllMocks();
+});
 
+afterAll(async () => {
+  try {
+    await prisma.clientProfile.deleteMany();
+    await prisma.user.deleteMany();
+    await prisma.job.deleteMany();
+  } catch (error) {
+    console.error('Cleanup error:', error);
+  } finally {
+    await prisma.$disconnect();
+  }
+});
+
+describe('Jobs API', () => {
   let token: string;
-  // Generate a token for authentication before tests run
   beforeAll(async () => {
-    // Call register API to get a token (modify according to your authentication method)
     const registerResponse = await request(app).post('/api/register').send({
       name: 'test Doe',
       email: 'test.doe@example.com',
@@ -30,7 +42,6 @@ describe('Jobs API', () => {
   // Before each test, clear the database and insert sample data
   beforeAll(async () => {
     await prisma.job.deleteMany();
-    // Seed sample users
     const user = await prisma.user.create({
       data: {
         name: 'Alice Johnson',
@@ -43,7 +54,6 @@ describe('Jobs API', () => {
     // Seed sample clients
     const client = await prisma.clientProfile.create({
       data: {
-        id: uuidv4(),
         userId: user.id,
         businessName: 'Sample Client',
       },
@@ -94,44 +104,36 @@ describe('Jobs API', () => {
     });
   });
 
-  afterAll(async () => {
-    await prisma.$disconnect();
+  it('should return all jobs', async () => {
+    const response = await request(app)
+      .get('/api/jobs/all')
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(4);
   });
 
-  describe('GET /api/jobs/all', () => {
-    it('should return all jobs', async () => {
-      const response = await request(app)
-        .get('/api/jobs/all')
-        .set('Authorization', `Bearer ${token}`);
-      expect(response.status).toBe(200);
-      expect(response.body.length).toBe(4);
-    });
+  it('should return jobs filtered by status', async () => {
+    const response = await request(app)
+      .get('/api/jobs?status=ACTIVE')
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBe(1);
+    expect(response.body[0].title).toBe('Job Title 2');
   });
 
-  describe('GET /api/jobs', () => {
-    it('should return jobs filtered by status', async () => {
-      const response = await request(app)
-        .get('/api/jobs?status=ACTIVE')
-        .set('Authorization', `Bearer ${token}`);
-      expect(response.status).toBe(200);
-      expect(response.body.length).toBe(1);
-      expect(response.body[0].title).toBe('Job Title 2');
-    });
+  it('should return 400 for invalid status', async () => {
+    const response = await request(app)
+      .get('/api/jobs?status=INVALID_STATUS')
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('Invalid status parameter');
+  });
 
-    it('should return 400 for invalid status', async () => {
-      const response = await request(app)
-        .get('/api/jobs?status=INVALID_STATUS')
-        .set('Authorization', `Bearer ${token}`);
-      expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Invalid status parameter');
-    });
-
-    it('should return all jobs if no status is provided', async () => {
-      const response = await request(app)
-        .get('/api/jobs')
-        .set('Authorization', `Bearer ${token}`);
-      expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Status query parameter is required');
-    });
+  it('should return all jobs if no status is provided', async () => {
+    const response = await request(app)
+      .get('/api/jobs')
+      .set('Authorization', `Bearer ${token}`);
+    expect(response.status).toBe(400);
+    expect(response.body.error).toBe('Status query parameter is required');
   });
 });

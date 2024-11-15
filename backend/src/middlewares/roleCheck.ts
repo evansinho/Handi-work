@@ -6,13 +6,13 @@ const prisma = new PrismaClient();
 const roleCheck = (allowedRoles: Role[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (!req.user?.id) {
+      if (!req.user?.userId) {
         console.log('Unauthorized access: User ID is missing on req.user');
         return res.status(403).json({ error: 'Unauthorized access' });
       }
 
       const user = await prisma.user.findUnique({
-        where: { id: req.user.id },
+        where: { id: req.user.userId },
         select: { role: true },
       });
 

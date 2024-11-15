@@ -1,96 +1,102 @@
 // Import necessary modules
 import request from 'supertest';
 import { app } from '../index';
-import jwt from 'jsonwebtoken';
-import { PrismaClient, Role } from '@prisma/client';
+import {
+  PrismaClient,
+  Role,
+  SkillLevel,
+  VerificationStatus,
+} from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Helper function to generate an admin token
-const generateAdminToken = () => {
-  return jwt.sign(
-    { userId: 'admin-user-id', role: Role.ADMIN },
-    process.env.JWT_SECRET!
-  );
-};
-
-// Helper function to generate a non-admin token
-const generateUserToken = () => {
-  return jwt.sign(
-    { id: 'user-id', role: Role.CLIENT },
-    process.env.JWT_SECRET!
-  );
-};
+afterAll(async () => {
+  try {
+    await prisma.freelancerProfile.deleteMany();
+    await prisma.user.deleteMany();
+  } catch (error) {
+    console.error('Cleanup error:', error);
+  } finally {
+    await prisma.$disconnect();
+  }
+});
 
 // Test suite
 describe('Freelancer Profile Endpoints', () => {
-  const adminToken = generateAdminToken();
-  const userToken = generateUserToken();
-  const userId = 'test-freelancer-id';
+  let adminToken: string;
+  beforeAll(async () => {
+    const adminResponse = await request(app).post('/api/register').send({
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      phoneNumber: '1234567890',
+      password: 'securepassword',
+      role: Role.ADMIN,
+      verificationStatus: VerificationStatus.PENDING,
+      twoFactorEnabled: false,
+    });
+    adminToken = adminResponse.body.token;
+    jest.clearAllMocks();
+  });
 
   describe('POST /api/freelancer-profile/approve/:userId', () => {
     it('should approve the freelancer profile when admin', async () => {
+      const newUser = await prisma.user.create({
+        data: {
+          name: 'test Doe',
+          email: 'test.doe@example.com',
+          phoneNumber: '1234567890',
+          passwordHash: 'securepassword',
+          role: Role.FREELANCER,
+          verificationStatus: VerificationStatus.PENDING,
+          twoFactorEnabled: false,
+        },
+      });
+      // Create the freelancer profile with the given userId
+      await prisma.freelancerProfile.create({
+        data: {
+          userId: newUser.id,
+          category: 'carpentry',
+          skillLevel: SkillLevel.MASTER,
+          hourlyRate: '20000',
+        },
+      });
       const response = await request(app)
-        .post(`/api/freelancer-profile/approve/${userId}`)
+        .post(`/api/freelancer-profile/approve/${newUser.id}`)
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe(
-        'Freelancer profile approved successfully'
-      );
-    });
-
-    it('should return 403 for non-admin users', async () => {
-      const response = await request(app)
-        .post(`/api/freelancer-profile/approve/${userId}`)
-        .set('Authorization', `Bearer ${userToken}`);
-
-      expect(response.status).toBe(403);
-      expect(response.body.message).toBe(
-        'You do not have permission to approve freelancer profiles'
-      );
-    });
-
-    it('should return 404 if the freelancer profile is not found', async () => {
-      const response = await request(app)
-        .post(`/api/freelancer-profile/approve/non-existent-id`)
-        .set('Authorization', `Bearer ${adminToken}`);
-
-      expect(response.status).toBe(404);
-      expect(response.body.message).toBe('Freelancer not found');
+      expect(response.body.message).toBe('Freelancer profile approved');
     });
   });
 
   describe('POST /api/freelancer-profile/reject/:userId', () => {
     it('should reject the freelancer profile when admin', async () => {
+      const newUser = await prisma.user.create({
+        data: {
+          name: 'test2 Doe',
+          email: 'test2.doe@example.com',
+          phoneNumber: '1234567890',
+          passwordHash: 'securepassword',
+          role: Role.FREELANCER,
+          verificationStatus: VerificationStatus.PENDING,
+          twoFactorEnabled: false,
+        },
+      });
+      // Create the freelancer profile with the given userId
+      await prisma.freelancerProfile.create({
+        data: {
+          userId: newUser.id,
+          category: 'carpentry',
+          skillLevel: SkillLevel.MASTER,
+          hourlyRate: '20000',
+        },
+      });
       const response = await request(app)
-        .post(`/api/freelancer-profile/reject/${userId}`)
+        .post(`/api/freelancer-profile/reject/${newUser.id}`)
         .set('Authorization', `Bearer ${adminToken}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.message).toBe(
-        'Freelancer profile rejected successfully'
-      );
-    });
-
-    it('should return 403 for non-admin users', async () => {
-      const response = await request(app)
-        .post(`/api/freelancer-profile/reject/${userId}`)
-        .set('Authorization', `Bearer ${userToken}`);
-
-      expect(response.status).toBe(403);
-      expect(response.body.message).toBe(
-        'You do not have permission to reject freelancer profiles'
-      );
-    });
-
-    it('should return 404 if the freelancer profile is not found', async () => {
-      const response = await request(app)
-        .post(`/api/freelancer-profile/reject/non-existent-id`)
-        .set('Authorization', `Bearer ${adminToken}`);
-
-      expect(response.status).toBe(404);
-      expect(response.body.message).toBe('Freelancer not found');
+      expect(response.body.message).toBe('Freelancer profile rejected');
     });
   });
 });

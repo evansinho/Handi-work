@@ -1,14 +1,17 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { logAdminActivity } from '../utils/adminUtils';
+import { validate as isUUID } from 'uuid';
 
 const prisma = new PrismaClient();
 
 // Approve Freelancers profile
 export const approveFreelancerProfile = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  const adminId = req.user?.id;
-
+  const adminId = req.user?.userId;
+  if (!isUUID(userId)) {
+    return res.status(400).json({ error: 'Invalid user ID format' });
+  }
   try {
     // Check if freelancer profile exists
     const freelancerProfile = await prisma.freelancerProfile.findUnique({
@@ -50,7 +53,7 @@ export const approveFreelancerProfile = async (req: Request, res: Response) => {
 // Reject Freelancers profile
 export const rejectFreelancerProfile = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  const adminId = req.user?.id;
+  const adminId = req.user?.userId;
 
   try {
     // Check if freelancer profile exists

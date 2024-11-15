@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 interface UserPayload {
-  id: string;
+  userId: string;
   role: string;
 }
 
@@ -27,7 +27,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
       token,
       process.env.JWT_SECRET as string
     ) as UserPayload;
-    req.user = decoded;
+    req.user = decoded as { userId: string; role: string };
     next();
   } catch (error) {
     console.error('Auth error:', error);

@@ -68,8 +68,8 @@ model User {
   updatedAt          DateTime           @updatedAt @db.Timestamp(0)
 
   // Relations
-  freelancerProfile FreelancerProfile?
-  clientProfile     ClientProfile?
+  freelancerProfile FreelancerProfile? @relation("UserToFreelancerProfile")
+  clientProfile   ClientProfile? @relation("UserToClientProfile")
   proposals         Proposal[]
   contracts         Contract[]
   ratingsGiven      Rating[]           @relation("RatingsGiven")
@@ -93,7 +93,7 @@ model FreelancerProfile {
   verified   Boolean    @default(false)
 
   // Relations
-  user     User       @relation(fields: [userId], references: [id])
+  user     User       @relation("UserToFreelancerProfile", fields: [userId], references: [id], onDelete: Cascade)
   Proposal Proposal[]
   Contract Contract[]
 
@@ -108,7 +108,7 @@ model ClientProfile {
   ratingAvg    Decimal? @db.Decimal(3, 2)
 
   // Relations
-  user User  @relation(fields: [userId], references: [id])
+  user   User   @relation("UserToClientProfile", fields: [userId], references: [id], onDelete: Cascade)
   Job  Job[]
 
   @@map("client_profile")
@@ -128,7 +128,7 @@ model Job {
   updatedAt   DateTime  @updatedAt @db.Timestamp(0)
 
   // Relations
-  client    ClientProfile @relation(fields: [clientId], references: [id])
+  client    ClientProfile @relation(fields: [clientId], references: [id], onDelete: Cascade)
   proposals Proposal[]
   contracts Contract[]
   ratings   Rating[]
@@ -216,7 +216,7 @@ model AdminActivity {
   createdAt DateTime @default(now()) @db.Timestamp(0)
 
   // Relations
-  admin User @relation(fields: [adminId], references: [id])
+  admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
 
   @@map("admin_activities")
 }
