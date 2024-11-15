@@ -72,9 +72,13 @@ export const registerUser = async (req: Request, res: Response) => {
       },
     });
 
-    const token = jwt.sign({ id: newUser.id, role: newUser.role }, JWT_SECRET, {
-      expiresIn: JWT_EXPIRATION,
-    });
+    const token = jwt.sign(
+      { userId: newUser.id, role: newUser.role },
+      JWT_SECRET,
+      {
+        expiresIn: JWT_EXPIRATION,
+      }
+    );
 
     // Send the response with the created user
     res.status(201).json({
@@ -198,13 +202,13 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     // Check if two-factor authentication is enabled
-    if (!user.twoFactorEnabled) {
-      return res.json({
-        message: 'Two-factor authentication required',
-        twoFactorEnabled: true,
-        userId: user.id,
-      });
-    }
+    // if (!user.twoFactorEnabled) {
+    //   return res.json({
+    //     message: 'Two-factor authentication required',
+    //     twoFactorEnabled: true,
+    //     userId: user.id,
+    //   });
+    // }
 
     // Generate a JWT token
     const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, {

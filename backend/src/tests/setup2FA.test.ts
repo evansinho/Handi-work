@@ -10,12 +10,14 @@ describe('2FA Verification Tests', () => {
   let secret: string;
 
   beforeAll(async () => {
+    await prisma.$connect();
+    jest.clearAllMocks();
     // Create a test user and set up 2FA for them
     const user = await prisma.user.create({
       data: {
         name: 'Test User',
         email: 'testuser2@example.com',
-        passwordHash: 'hashed_password', // Use a real hash here if needed
+        passwordHash: 'hashed_password',
         role: 'CLIENT',
         verificationStatus: 'VERIFIED',
         twoFactorEnabled: false,
@@ -38,8 +40,8 @@ describe('2FA Verification Tests', () => {
   });
 
   afterAll(async () => {
-    // Clean up the test database
     await prisma.user.deleteMany();
+    await prisma.$disconnect();
   });
 
   test('should verify valid 2FA code', async () => {
