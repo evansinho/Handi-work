@@ -77,13 +77,13 @@ describe('User Endpoints', () => {
       .send({
         name: 'Updated Name',
         email: 'updateduser@example.com',
-        role: Role.FREELANCER,
+        role: Role.ARTISAN,
       })
       .expect(200);
 
     expect(response.body).toHaveProperty('name', 'Updated Name');
     expect(response.body).toHaveProperty('email', 'updateduser@example.com');
-    expect(response.body).toHaveProperty('role', 'FREELANCER');
+    expect(response.body).toHaveProperty('role', 'ARTISAN');
   });
 
   // Test DELETE /user/:id

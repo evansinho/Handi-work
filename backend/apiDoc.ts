@@ -424,22 +424,22 @@
 
 /**
  * @swagger
- * /api/freelancer-profile/approve/{userId}:
+ * /api/artisan-profile/approve/{userId}:
  *   post:
- *     summary: Approve a freelancer's profile
- *     tags: [Freelancer Profile]
+ *     summary: Approve an artisan's profile
+ *     tags: [Artisan Profile]
  *     parameters:
  *       - in: path
  *         name: userId
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the freelancer to approve
+ *         description: The ID of the artisan to approve
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Freelancer profile approved successfully
+ *         description: Artisan profile approved successfully
  *         content:
  *           application/json:
  *             schema:
@@ -447,7 +447,7 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Freelancer profile approved successfully
+ *                   example: Artisan profile approved successfully
  *       403:
  *         description: Unauthorized action, admin role required
  *         content:
@@ -457,9 +457,9 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: You do not have permission to approve freelancer profiles
+ *                   example: You do not have permission to approve artisan profiles
  *       404:
- *         description: Freelancer not found
+ *         description: Artisan not found
  *         content:
  *           application/json:
  *             schema:
@@ -467,7 +467,7 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Freelancer not found
+ *                   example: Artisan not found
  *       500:
  *         description: Server error during approval process
  *         content:
@@ -477,27 +477,27 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: An error occurred while approving the freelancer profile
+ *                   example: An error occurred while approving the artisan profile
  */
 
 /**
  * @swagger
- * /api/freelancer-profile/reject/{userId}:
+ * /api/artisan-profile/reject/{userId}:
  *   post:
- *     summary: Reject a freelancer's profile
- *     tags: [Freelancer Profile]
+ *     summary: Reject an artisan's profile
+ *     tags: [Artisan Profile]
  *     parameters:
  *       - in: path
  *         name: userId
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the freelancer to reject
+ *         description: The ID of the artisan to reject
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Freelancer profile rejected successfully
+ *         description: Artisan profile rejected successfully
  *         content:
  *           application/json:
  *             schema:
@@ -505,7 +505,7 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Freelancer profile rejected successfully
+ *                   example: Artisan profile rejected successfully
  *       403:
  *         description: Unauthorized action, admin role required
  *         content:
@@ -515,9 +515,9 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: You do not have permission to reject freelancer profiles
+ *                   example: You do not have permission to reject artisan profiles
  *       404:
- *         description: Freelancer not found
+ *         description: Artisan not found
  *         content:
  *           application/json:
  *             schema:
@@ -525,7 +525,7 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Freelancer not found
+ *                   example: Artisan not found
  *       500:
  *         description: Server error during rejection process
  *         content:
@@ -535,7 +535,7 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: An error occurred while rejecting the freelancer profile
+ *                   example: An error occurred while rejecting the artisan profile
  */
 
 /**
@@ -677,7 +677,7 @@
  *         newSignups:
  *           type: string
  *           description: The number of new signups within the specified date range
- *         freelancerProfilesCreated:
+ *         artisanProfilesCreated:
  *           type: string
  *           description: The number of freelancer profiles created
  *         clientProfilesCreated:
@@ -695,7 +695,7 @@
  *       example:
  *         totalUsers: "1000"
  *         newSignups: "150"
- *         freelancerProfilesCreated: "200"
+ *         artisanProfilesCreated: "200"
  *         clientProfilesCreated: "100"
  *         jobPosts: "300"
  *         proposalsSubmitted: "500"

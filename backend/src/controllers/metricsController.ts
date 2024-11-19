@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 interface UserActivityMetrics {
   totalUsers: number;
   newSignups: number;
-  freelancerProfilesCreated: number;
+  artisanProfilesCreated: number;
   clientProfilesCreated: number;
   jobPosts: number;
   proposalsSubmitted: number;
@@ -38,7 +38,7 @@ export const getUserActivityMetrics = async (req: Request, res: Response) => {
   SELECT
     (SELECT COUNT(*) FROM "users") AS "totalUsers",
     (SELECT COUNT(*) FROM "users" WHERE "createdAt" BETWEEN ${startDate}::timestamp AND ${endDate}::timestamp) AS "newSignups",
-    (SELECT COUNT(*) FROM "freelancer_profile") AS "freelancerProfilesCreated",
+    (SELECT COUNT(*) FROM "artisan_profile") AS "artisanProfilesCreated",
     (SELECT COUNT(*) FROM "client_profile") AS "clientProfilesCreated",
     (SELECT COUNT(*) FROM "jobs") AS "jobPosts",
     (SELECT COUNT(*) FROM "proposals") AS "proposalsSubmitted",
@@ -49,7 +49,7 @@ export const getUserActivityMetrics = async (req: Request, res: Response) => {
     const sanitizedMetrics = userActivity.map((metric) => ({
       totalUsers: metric.totalUsers.toString(),
       newSignups: metric.newSignups.toString(),
-      freelancerProfilesCreated: metric.freelancerProfilesCreated.toString(),
+      artisanProfilesCreated: metric.artisanProfilesCreated.toString(),
       clientProfilesCreated: metric.clientProfilesCreated.toString(),
       jobPosts: metric.jobPosts.toString(),
       proposalsSubmitted: metric.proposalsSubmitted.toString(),

@@ -5,25 +5,25 @@ import { validate as isUUID } from 'uuid';
 
 const prisma = new PrismaClient();
 
-// Approve Freelancers profile
-export const approveFreelancerProfile = async (req: Request, res: Response) => {
+// Approve Artisans profile
+export const approveArtisanProfile = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const adminId = req.user?.userId;
   if (!isUUID(userId)) {
     return res.status(400).json({ error: 'Invalid user ID format' });
   }
   try {
-    // Check if freelancer profile exists
-    const freelancerProfile = await prisma.freelancerProfile.findUnique({
+    // Check if artisan profile exists
+    const artisanProfile = await prisma.artisanProfile.findUnique({
       where: { userId },
     });
 
-    if (!freelancerProfile) {
-      return res.status(404).json({ error: 'Freelancer profile not found' });
+    if (!artisanProfile) {
+      return res.status(404).json({ error: 'Artisan profile not found' });
     }
 
     // If profile exists, update it to set it as verified
-    await prisma.freelancerProfile.update({
+    await prisma.artisanProfile.update({
       where: { userId },
       data: {
         verified: true,
@@ -39,33 +39,33 @@ export const approveFreelancerProfile = async (req: Request, res: Response) => {
     });
 
     // Log the admin activity
-    await logAdminActivity(adminId!, `Approved freelancer profile: ${userId}`);
+    await logAdminActivity(adminId!, `Approved artisan profile: ${userId}`);
 
     res
       .status(200)
-      .json({ message: 'Freelancer profile approved', freelancerProfile });
+      .json({ message: 'Artisan profile approved', artisanProfile });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to approve freelancer profile' });
+    res.status(500).json({ error: 'Failed to approve artisan profile' });
   }
 };
 
-// Reject Freelancers profile
-export const rejectFreelancerProfile = async (req: Request, res: Response) => {
+// Reject Artisans profile
+export const rejectArtisanProfile = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const adminId = req.user?.userId;
 
   try {
-    // Check if freelancer profile exists
-    const freelancerProfile = await prisma.freelancerProfile.findUnique({
+    // Check if Artisan profile exists
+    const artisanProfile = await prisma.artisanProfile.findUnique({
       where: { userId },
     });
 
-    if (!freelancerProfile) {
-      return res.status(404).json({ error: 'Freelancer profile not found' });
+    if (!artisanProfile) {
+      return res.status(404).json({ error: 'Artisan profile not found' });
     }
-    // Update freelancer profile to set it as not verified
-    await prisma.freelancerProfile.update({
+    // Update Artisan profile to set it as not verified
+    await prisma.artisanProfile.update({
       where: { userId },
       data: {
         verified: false,
@@ -80,13 +80,13 @@ export const rejectFreelancerProfile = async (req: Request, res: Response) => {
       },
     });
     // Log the admin activity (action of rejection)
-    await logAdminActivity(adminId!, `Rejected freelancer profile: ${userId}`);
+    await logAdminActivity(adminId!, `Rejected artisan profile: ${userId}`);
 
     res
       .status(200)
-      .json({ message: 'Freelancer profile rejected', freelancerProfile });
+      .json({ message: 'Artisan profile rejected', artisanProfile });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to reject freelancer profile' });
+    res.status(500).json({ error: 'Failed to reject artisan profile' });
   }
 };

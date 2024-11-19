@@ -16,9 +16,9 @@ import roleCheck from '../middlewares/roleCheck';
 import { Role } from '@prisma/client';
 import authMiddleware from '../middlewares/auth';
 import {
-  approveFreelancerProfile,
-  rejectFreelancerProfile,
-} from '../controllers/freelanceProfileController';
+  approveArtisanProfile,
+  rejectArtisanProfile,
+} from '../controllers/artisanProfileController';
 import {
   getUserActivityMetrics,
   getAppPerformanceMetrics,
@@ -37,16 +37,16 @@ router.delete('/user/:id', authMiddleware, roleCheck([Role.ADMIN]), deleteUser);
 router.get('/jobs/all', authMiddleware, roleCheck([Role.ADMIN]), getAllJobs);
 router.get('/jobs', authMiddleware, roleCheck([Role.ADMIN]), filterJobByStatus);
 router.post(
-  '/freelancer-profile/approve/:userId',
+  '/artisan-profile/approve/:userId',
   authMiddleware,
   roleCheck([Role.ADMIN]),
-  approveFreelancerProfile
+  approveArtisanProfile
 );
 router.post(
-  '/freelancer-profile/reject/:userId',
+  '/artisan-profile/reject/:userId',
   authMiddleware,
   roleCheck([Role.ADMIN]),
-  rejectFreelancerProfile
+  rejectArtisanProfile
 );
 router.get(
   '/metrics/user-activity',
