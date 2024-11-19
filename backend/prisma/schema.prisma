@@ -11,7 +11,7 @@ generator client {
 // Define enums first for use across models
 enum Role {
   CLIENT
-  FREELANCER
+  ARTISAN
   ADMIN
 }
 
@@ -68,7 +68,7 @@ model User {
   updatedAt          DateTime           @updatedAt @db.Timestamp(0)
 
   // Relations
-  freelancerProfile FreelancerProfile? @relation("UserToFreelancerProfile")
+  artisanProfile ArtisanProfile? @relation("UserToArtisanProfile")
   clientProfile   ClientProfile? @relation("UserToClientProfile")
   proposals         Proposal[]
   contracts         Contract[]
@@ -80,7 +80,7 @@ model User {
   @@map("users")
 }
 
-model FreelancerProfile {
+model ArtisanProfile {
   id         String     @id @default(uuid()) @db.Uuid
   userId     String     @unique @db.Uuid
   bio        String?    @db.Text
@@ -93,11 +93,11 @@ model FreelancerProfile {
   verified   Boolean    @default(false)
 
   // Relations
-  user     User       @relation("UserToFreelancerProfile", fields: [userId], references: [id], onDelete: Cascade)
+  user     User       @relation("UserToArtisanProfile", fields: [userId], references: [id], onDelete: Cascade)
   Proposal Proposal[]
   Contract Contract[]
 
-  @@map("freelancer_profile")
+  @@map("artisan_profile")
 }
 
 model ClientProfile {
@@ -140,7 +140,7 @@ model Job {
 model Proposal {
   id           String         @id @default(uuid()) @db.Uuid
   jobId        String         @db.Uuid
-  freelancerId String         @db.Uuid
+  artisanId String         @db.Uuid
   proposalText String?        @db.Text
   proposedRate Decimal        @db.Decimal(10, 2)
   status       ProposalStatus
@@ -148,7 +148,7 @@ model Proposal {
 
   // Relations
   job        Job               @relation(fields: [jobId], references: [id])
-  freelancer FreelancerProfile @relation(fields: [freelancerId], references: [id])
+  artisan ArtisanProfile @relation(fields: [artisanId], references: [id])
   User       User?             @relation(fields: [userId], references: [id])
   userId     String?           @db.Uuid
 
@@ -158,7 +158,7 @@ model Proposal {
 model Contract {
   id             String        @id @default(uuid()) @db.Uuid
   jobId          String        @db.Uuid
-  freelancerId   String        @db.Uuid
+  artisanId   String        @db.Uuid
   agreedRate     Decimal       @db.Decimal(10, 2)
   paymentStatus  PaymentStatus
   milestoneCount Int
@@ -167,7 +167,7 @@ model Contract {
 
   // Relations
   job        Job               @relation(fields: [jobId], references: [id])
-  freelancer FreelancerProfile @relation(fields: [freelancerId], references: [id])
+  artisan ArtisanProfile @relation(fields: [artisanId], references: [id])
   payments   Payment[]
   User       User?             @relation(fields: [userId], references: [id])
   userId     String?           @db.Uuid

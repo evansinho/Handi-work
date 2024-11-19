@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('CLIENT', 'FREELANCER', 'ADMIN');
+CREATE TYPE "Role" AS ENUM ('CLIENT', 'ARTISAN', 'ADMIN');
 
 -- CreateEnum
 CREATE TYPE "VerificationStatus" AS ENUM ('PENDING', 'VERIFIED', 'REJECTED');
@@ -29,6 +29,7 @@ CREATE TABLE "users" (
     "role" "Role" NOT NULL,
     "verificationStatus" "VerificationStatus" NOT NULL,
     "twoFactorEnabled" BOOLEAN NOT NULL DEFAULT false,
+    "twoFactorSecret" TEXT,
     "createdAt" TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(0) NOT NULL,
 
@@ -36,7 +37,7 @@ CREATE TABLE "users" (
 );
 
 -- CreateTable
-CREATE TABLE "freelancer_profile" (
+CREATE TABLE "artisan_profile" (
     "id" UUID NOT NULL,
     "userId" UUID NOT NULL,
     "bio" TEXT,
@@ -48,7 +49,7 @@ CREATE TABLE "freelancer_profile" (
     "ratingsAvg" DECIMAL(3,2),
     "verified" BOOLEAN NOT NULL DEFAULT false,
 
-    CONSTRAINT "freelancer_profile_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "artisan_profile_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -83,7 +84,7 @@ CREATE TABLE "jobs" (
 CREATE TABLE "proposals" (
     "id" UUID NOT NULL,
     "jobId" UUID NOT NULL,
-    "freelancerId" UUID NOT NULL,
+    "artisanId" UUID NOT NULL,
     "proposalText" TEXT,
     "proposedRate" DECIMAL(10,2) NOT NULL,
     "status" "ProposalStatus" NOT NULL,
@@ -97,7 +98,7 @@ CREATE TABLE "proposals" (
 CREATE TABLE "contracts" (
     "id" UUID NOT NULL,
     "jobId" UUID NOT NULL,
-    "freelancerId" UUID NOT NULL,
+    "artisanId" UUID NOT NULL,
     "agreedRate" DECIMAL(10,2) NOT NULL,
     "paymentStatus" "PaymentStatus" NOT NULL,
     "milestoneCount" INTEGER NOT NULL,
@@ -161,25 +162,25 @@ CREATE TABLE "notifications" (
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "freelancer_profile_userId_key" ON "freelancer_profile"("userId");
+CREATE UNIQUE INDEX "artisan_profile_userId_key" ON "artisan_profile"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "client_profile_userId_key" ON "client_profile"("userId");
 
 -- AddForeignKey
-ALTER TABLE "freelancer_profile" ADD CONSTRAINT "freelancer_profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "artisan_profile" ADD CONSTRAINT "artisan_profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "client_profile" ADD CONSTRAINT "client_profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "client_profile" ADD CONSTRAINT "client_profile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "jobs" ADD CONSTRAINT "jobs_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "client_profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "jobs" ADD CONSTRAINT "jobs_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "client_profile"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "proposals" ADD CONSTRAINT "proposals_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "jobs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "proposals" ADD CONSTRAINT "proposals_freelancerId_fkey" FOREIGN KEY ("freelancerId") REFERENCES "freelancer_profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "proposals" ADD CONSTRAINT "proposals_artisanId_fkey" FOREIGN KEY ("artisanId") REFERENCES "artisan_profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "proposals" ADD CONSTRAINT "proposals_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -188,7 +189,7 @@ ALTER TABLE "proposals" ADD CONSTRAINT "proposals_userId_fkey" FOREIGN KEY ("use
 ALTER TABLE "contracts" ADD CONSTRAINT "contracts_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "jobs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "contracts" ADD CONSTRAINT "contracts_freelancerId_fkey" FOREIGN KEY ("freelancerId") REFERENCES "freelancer_profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "contracts" ADD CONSTRAINT "contracts_artisanId_fkey" FOREIGN KEY ("artisanId") REFERENCES "artisan_profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "contracts" ADD CONSTRAINT "contracts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -209,7 +210,7 @@ ALTER TABLE "payments" ADD CONSTRAINT "payments_jobId_fkey" FOREIGN KEY ("jobId"
 ALTER TABLE "payments" ADD CONSTRAINT "payments_contractId_fkey" FOREIGN KEY ("contractId") REFERENCES "contracts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "admin_activities" ADD CONSTRAINT "admin_activities_adminId_fkey" FOREIGN KEY ("adminId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "admin_activities" ADD CONSTRAINT "admin_activities_adminId_fkey" FOREIGN KEY ("adminId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
