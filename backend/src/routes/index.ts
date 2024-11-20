@@ -18,6 +18,10 @@ import authMiddleware from '../middlewares/auth';
 import {
   approveArtisanProfile,
   rejectArtisanProfile,
+  createArtisanProfile,
+  getArtisanProfile,
+  updateArtisanProfile,
+  deleteArtisanProfile,
 } from '../controllers/artisanProfileController';
 import {
   getUserActivityMetrics,
@@ -36,6 +40,30 @@ router.put('/user/:id', authMiddleware, roleCheck([Role.ADMIN]), updateUser);
 router.delete('/user/:id', authMiddleware, roleCheck([Role.ADMIN]), deleteUser);
 router.get('/jobs/all', authMiddleware, roleCheck([Role.ADMIN]), getAllJobs);
 router.get('/jobs', authMiddleware, roleCheck([Role.ADMIN]), filterJobByStatus);
+router.post(
+  '/artisan-profile',
+  authMiddleware,
+  roleCheck([Role.ARTISAN]),
+  createArtisanProfile
+);
+router.get(
+  '/artisan-profile/:id',
+  authMiddleware,
+  roleCheck([Role.ARTISAN]),
+  getArtisanProfile
+);
+router.put(
+  '/artisan-profile/:id',
+  authMiddleware,
+  roleCheck([Role.ARTISAN]),
+  updateArtisanProfile
+);
+router.delete(
+  '/artisan-profile/:id',
+  authMiddleware,
+  roleCheck([Role.ARTISAN]),
+  deleteArtisanProfile
+);
 router.post(
   '/artisan-profile/approve/:userId',
   authMiddleware,
