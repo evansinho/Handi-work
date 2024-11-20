@@ -16,7 +16,7 @@ const userSchema = Joi.object({
   email: Joi.string().email().required(),
   phoneNumber: Joi.string().min(10).max(20).optional(),
   password: Joi.string().min(6).required(),
-  role: Joi.string().valid('CLIENT', 'FREELANCER', 'ADMIN').required(),
+  role: Joi.string().valid('CLIENT', 'ARTISAN', 'ADMIN').required(),
   verificationStatus: Joi.string()
     .valid('PENDING', 'VERIFIED', 'REJECTED')
     .required(),

@@ -90,3 +90,82 @@ export const rejectArtisanProfile = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to reject artisan profile' });
   }
 };
+
+// Create Artisan Profile
+export const createArtisanProfile = async (req: Request, res: Response) => {
+  const { userId, bio, category, skillLevel, portfolio, hourlyRate } = req.body;
+
+  try {
+    const artisanProfile = await prisma.artisanProfile.create({
+      data: {
+        userId,
+        bio,
+        category,
+        skillLevel,
+        portfolio,
+        hourlyRate,
+      },
+    });
+
+    res
+      .status(201)
+      .json({ message: 'Artisan profile created', artisanProfile });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to create artisan profile' });
+  }
+};
+
+// Get Artisan Profile
+export const getArtisanProfile = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const artisanProfile = await prisma.artisanProfile.findUnique({
+      where: { id },
+    });
+
+    if (!artisanProfile) {
+      return res.status(404).json({ error: 'Artisan profile not found' });
+    }
+
+    res.status(200).json(artisanProfile);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to retrieve artisan profile' });
+  }
+};
+
+// Update Artisan Profile
+export const updateArtisanProfile = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  try {
+    const artisanProfile = await prisma.artisanProfile.update({
+      where: { id },
+      data: updates,
+    });
+
+    res.status(200).json({ message: 'Atisan profile updated', artisanProfile });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update artisan profile' });
+  }
+};
+
+// Delete Artisan Profile
+export const deleteArtisanProfile = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.artisanProfile.delete({
+      where: { id },
+    });
+
+    res.status(200).json({ message: 'Artisan profile deleted' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to delete artisan profile' });
+  }
+};

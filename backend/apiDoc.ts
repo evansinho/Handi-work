@@ -542,6 +542,258 @@
  * @swagger
  * components:
  *   schemas:
+ *     ArtisanProfile:
+ *       type: object
+ *       required:
+ *         - id
+ *         - userId
+ *         - category
+ *         - skillLevel
+ *         - hourlyRate
+ *         - available
+ *         - verified
+ *       properties:
+ *         id:
+ *           type: string
+ *           format: uuid
+ *           description: The unique identifier for the artisan profile
+ *         userId:
+ *           type: string
+ *           format: uuid
+ *           description: The ID of the associated user
+ *         bio:
+ *           type: string
+ *           nullable: true
+ *           description: A brief biography or description of the artisan
+ *         category:
+ *           type: string
+ *           description: The category of work the artisan specializes in
+ *         skillLevel:
+ *           type: string
+ *           enum: [Beginner, Intermediate, Expert]
+ *           description: The artisan's skill level
+ *         portfolio:
+ *           type: string
+ *           nullable: true
+ *           description: A link or description of the artisan's portfolio
+ *         hourlyRate:
+ *           type: number
+ *           format: decimal
+ *           description: The artisan's hourly rate
+ *         available:
+ *           type: boolean
+ *           description: Whether the artisan is currently available for work
+ *         ratingsAvg:
+ *           type: number
+ *           format: decimal
+ *           nullable: true
+ *           description: The average rating of the artisan
+ *         verified:
+ *           type: boolean
+ *           description: Whether the artisan's profile has been verified
+ *         user:
+ *           $ref: '#/components/schemas/User'
+ *           description: The associated user details
+ *       example:
+ *         id: "123e4567-e89b-12d3-a456-426614174000"
+ *         userId: "456e1234-e89b-12d3-a456-426614174001"
+ *         bio: "Experienced artisan specializing in carpentry and furniture design."
+ *         category: "Carpentry"
+ *         skillLevel: "Expert"
+ *         portfolio: "https://portfolio.example.com/janedoe"
+ *         hourlyRate: 50.00
+ *         available: true
+ *         ratingsAvg: 4.85
+ *         verified: true
+ *         user:
+ *           id: "456e1234-e89b-12d3-a456-426614174001"
+ *           name: "Jane Doe"
+ *           email: "janedoe@example.com"
+ */
+
+/**
+ * @swagger
+ * /api/artisan-profiles:
+ *   post:
+ *     summary: Create a new artisan profile
+ *     tags: [Artisan Profile]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ArtisanProfile'
+ *     responses:
+ *       201:
+ *         description: Artisan profile created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ArtisanProfile'
+ *       400:
+ *         description: Invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Invalid data provided
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /api/artisan-profiles/{id}:
+ *   get:
+ *     summary: Retrieve an artisan profile by ID
+ *     tags: [Artisan Profile]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         required: true
+ *         description: The unique ID of the artisan profile
+ *     responses:
+ *       200:
+ *         description: The artisan profile data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ArtisanProfile'
+ *       404:
+ *         description: Artisan profile not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Artisan profile not found
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /api/artisan-profile/{id}:
+ *   put:
+ *     summary: Update an artisan profile
+ *     tags: [Artisan Profile]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the artisan profile to update
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               bio:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *               skillLevel:
+ *                 type: string
+ *               portfolio:
+ *                 type: string
+ *               hourlyRate:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Artisan profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Artisan profile updated
+ *                 artisanProfile:
+ *                   type: object
+ *       500:
+ *         description: Failed to update artisan profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to update artisan profile
+ */
+
+/**
+ * @swagger
+ * /api/artisan-profile/{id}:
+ *   delete:
+ *     summary: Delete an artisan profile
+ *     tags: [Artisan Profile]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the artisan profile to delete
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Artisan profile deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Artisan profile deleted
+ *       500:
+ *         description: Failed to delete artisan profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Failed to delete artisan profile
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
  *     Job:
  *       type: object
  *       required:
