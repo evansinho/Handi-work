@@ -94,10 +94,25 @@ model ArtisanProfile {
 
   // Relations
   user     User       @relation("UserToArtisanProfile", fields: [userId], references: [id], onDelete: Cascade)
+  portfolioItems PortfolioItem[]
   Proposal Proposal[]
   Contract Contract[]
 
   @@map("artisan_profile")
+}
+
+model PortfolioItem {
+  id            String   @id @default(uuid()) @db.Uuid
+  artisanId     String   @db.Uuid
+  title         String   @db.VarChar(255)
+  description   String?  @db.Text
+  imageUrl      String   @db.Text
+  createdAt     DateTime @default(now()) @db.Timestamp(0)
+
+  // Relations
+  artisan ArtisanProfile @relation(fields: [artisanId], references: [id], onDelete: Cascade)
+
+  @@map("portfolio_items")
 }
 
 model ClientProfile {

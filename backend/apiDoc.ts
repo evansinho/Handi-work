@@ -794,6 +794,153 @@
  * @swagger
  * components:
  *   schemas:
+ *     PortfolioItem:
+ *       type: object
+ *       required:
+ *         - artisanId
+ *         - title
+ *         - description
+ *         - imageUrl
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The unique identifier of the portfolio item
+ *         artisanId:
+ *           type: string
+ *           description: The ID of the artisan who owns the portfolio item
+ *         title:
+ *           type: string
+ *           description: The title of the portfolio item
+ *         description:
+ *           type: string
+ *           description: A brief description of the portfolio item
+ *         imageUrl:
+ *           type: string
+ *           description: The URL of the portfolio item's image
+ *       example:
+ *         id: "123e4567-e89b-12d3-a456-426614174000"
+ *         artisanId: "artisan123"
+ *         title: "Modern Kitchen Design"
+ *         description: "A contemporary kitchen design with high-quality materials."
+ *         imageUrl: "https://example.com/image.jpg"
+ */
+
+/**
+ * @swagger
+ * /api/portfolio:
+ *   post:
+ *     summary: Upload a portfolio item for an artisan
+ *     tags: [Portfolio]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               artisanId:
+ *                 type: string
+ *                 description: The ID of the artisan
+ *               title:
+ *                 type: string
+ *                 description: The title of the portfolio item
+ *               description:
+ *                 type: string
+ *                 description: A description of the portfolio item
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: The image file for the portfolio item
+ *             required:
+ *               - artisanId
+ *               - title
+ *               - description
+ *               - image
+ *     responses:
+ *       201:
+ *         description: Portfolio item uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PortfolioItem'
+ *       500:
+ *         description: Failed to upload portfolio item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to upload portfolio item
+ */
+
+/**
+ * @swagger
+ * /api/portfolio/{artisanId}:
+ *   get:
+ *     summary: Retrieve all portfolio items for a specific artisan
+ *     tags: [Portfolio]
+ *     parameters:
+ *       - in: path
+ *         name: artisanId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the artisan
+ *     responses:
+ *       200:
+ *         description: List of portfolio items retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PortfolioItem'
+ *       500:
+ *         description: Failed to retrieve portfolio items
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to retrieve portfolio items
+ */
+
+/**
+ * @swagger
+ * /api/portfolio/{id}:
+ *   delete:
+ *     summary: Delete a portfolio item
+ *     tags: [Portfolio]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the portfolio item to delete
+ *     responses:
+ *       204:
+ *         description: Portfolio item deleted successfully
+ *       500:
+ *         description: Failed to delete portfolio item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to delete portfolio item
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
  *     Job:
  *       type: object
  *       required:

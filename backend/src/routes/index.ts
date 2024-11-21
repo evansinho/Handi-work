@@ -27,8 +27,16 @@ import {
   getUserActivityMetrics,
   getAppPerformanceMetrics,
 } from '../controllers/metricsController';
+import { cloudinaryStorage } from '../services/cloudinary';
+import multer from 'multer';
+import {
+  deletePortfolioItem,
+  getPortfolioItems,
+  uploadPortfolioItem,
+} from '../controllers/portfolioItemController';
 
 const router = express.Router();
+const upload = multer({ storage: cloudinaryStorage });
 
 router.post('/login', loginUser);
 router.post('/register', registerUser);
@@ -76,6 +84,9 @@ router.post(
   roleCheck([Role.ADMIN]),
   rejectArtisanProfile
 );
+router.post('/portfolio', upload.single('image'), uploadPortfolioItem);
+router.get('/portfolio/:artisanId', getPortfolioItems);
+router.delete('/portfolio/:id', deletePortfolioItem);
 router.get(
   '/metrics/user-activity',
   authMiddleware,
