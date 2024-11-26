@@ -1228,3 +1228,183 @@
  *                   type: string
  *                   example: Internal Server Error
  */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Rating:
+ *       type: object
+ *       required:
+ *         - jobId
+ *         - fromUserId
+ *         - toUserId
+ *         - rating
+ *       properties:
+ *         jobId:
+ *           type: string
+ *           description: The ID of the job being rated
+ *         fromUserId:
+ *           type: string
+ *           description: The ID of the user giving the rating
+ *         toUserId:
+ *           type: string
+ *           description: The ID of the user receiving the rating
+ *         rating:
+ *           type: number
+ *           format: float
+ *           description: The rating given by the user (1-5 scale)
+ *         review:
+ *           type: string
+ *           description: An optional review for the rated user
+ *       example:
+ *         jobId: "b0fd4c93-5064-4e3e-8e04-e2ff0d76a093"
+ *         fromUserId: "d6e5e017-e174-4ad9-9316-4b9261c54613"
+ *         toUserId: "c53a7e7f-b378-41c2-970f-bd3d432fe4a6"
+ *         rating: 4.5
+ *         review: "Great job, would hire again!"
+ *
+ *     UserProfile:
+ *       type: object
+ *       required:
+ *         - id
+ *         - name
+ *         - role
+ *         - averageRating
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The unique ID of the user
+ *         name:
+ *           type: string
+ *           description: The name of the user
+ *         role:
+ *           type: string
+ *           description: The role of the user (e.g., CLIENT, ARTISAN)
+ *         averageRating:
+ *           type: number
+ *           format: float
+ *           description: The average rating of the user based on received ratings
+ *       example:
+ *         id: "c53a7e7f-b378-41c2-970f-bd3d432fe4a6"
+ *         name: "John Doe"
+ *         role: "ARTISAN"
+ *         averageRating: 4.2
+ */
+
+/**
+ * @swagger
+ * /ratings:
+ *   post:
+ *     summary: Submit a rating for a user
+ *     tags: [Ratings]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Rating'
+ *     responses:
+ *       201:
+ *         description: Rating successfully submitted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Rating submitted successfully
+ *       400:
+ *         description: Bad request, invalid data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Invalid data provided
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
+
+/**
+ * @swagger
+ * /ratings/{userId}:
+ *   get:
+ *     summary: Retrieve all ratings for a specific user
+ *     tags: [Ratings]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique ID of the user whose ratings are being retrieved
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved all ratings for the user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   jobId:
+ *                     type: string
+ *                     description: The ID of the job being rated
+ *                   fromUserId:
+ *                     type: string
+ *                     description: The ID of the user who gave the rating
+ *                   toUserId:
+ *                     type: string
+ *                     description: The ID of the user receiving the rating
+ *                   rating:
+ *                     type: number
+ *                     format: float
+ *                     description: The rating given by the user (1-5 scale)
+ *                   review:
+ *                     type: string
+ *                     description: The optional review for the rated user
+ *               example:
+ *                 - jobId: "b0fd4c93-5064-4e3e-8e04-e2ff0d76a093"
+ *                   fromUserId: "d6e5e017-e174-4ad9-9316-4b9261c54613"
+ *                   toUserId: "c53a7e7f-b378-41c2-970f-bd3d432fe4a6"
+ *                   rating: 4.5
+ *                   review: "Great job, would hire again!"
+ *                 - jobId: "a12f3b47-ffb5-4c7b-8d62-b35cd48b3d55"
+ *                   fromUserId: "a2f9e017-b428-4ad9-9316-4b9261c67890"
+ *                   toUserId: "c53a7e7f-b378-41c2-970f-bd3d432fe4a6"
+ *                   rating: 3.0
+ *                   review: "Good work, but room for improvement."
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: User not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
