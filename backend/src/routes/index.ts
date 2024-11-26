@@ -34,6 +34,7 @@ import {
   getPortfolioItems,
   uploadPortfolioItem,
 } from '../controllers/portfolioItemController';
+import { fetchRatings, postRating } from '../controllers/ratingsController';
 
 const router = express.Router();
 const upload = multer({ storage: cloudinaryStorage });
@@ -99,5 +100,7 @@ router.get(
   roleCheck([Role.ADMIN]),
   getAppPerformanceMetrics
 );
+router.post('/ratings', postRating);
+router.get('/ratings/:userId', fetchRatings);
 
 export default router;
