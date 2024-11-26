@@ -1057,6 +1057,175 @@
 
 /**
  * @swagger
+ * /api/jobs:
+ *   post:
+ *     summary: Create a new job
+ *     tags: [Job]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Job'
+ *     responses:
+ *       201:
+ *         description: Job created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Job'
+ *       400:
+ *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Missing required fields."
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "An error occurred while creating the job"
+ */
+
+/**
+ * @swagger
+ * /api/jobs/{clientId}:
+ *   get:
+ *     summary: Retrieve jobs created by a client
+ *     tags: [Job]
+ *     parameters:
+ *       - in: path
+ *         name: clientId
+ *         required: true
+ *         description: The ID of the client to retrieve their jobs
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of jobs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Job'
+ *       400:
+ *         description: Client ID is required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Client ID is required."
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "An error occurred while retrieving jobs"
+ */
+
+/**
+ * @swagger
+ * /api/jobs/{id}:
+ *   put:
+ *     summary: Update an existing job
+ *     tags: [Job]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the job to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               clientId:
+ *                 type: string
+ *                 description: The client's unique identifier
+ *               title:
+ *                 type: string
+ *                 description: The job's title
+ *               description:
+ *                 type: string
+ *                 description: A detailed description of the job
+ *               category:
+ *                 type: string
+ *                 description: The category of the job
+ *               location:
+ *                 type: string
+ *                 description: Job location (Remote or On-site)
+ *               budgetMin:
+ *                 type: number
+ *                 description: The minimum budget for the job
+ *               budgetMax:
+ *                 type: number
+ *                 description: The maximum budget for the job
+ *               status:
+ *                 type: string
+ *                 enum: [PENDING, ACTIVE, COMPLETED, DISPUTED]
+ *                 description: The status of the job
+ *     responses:
+ *       200:
+ *         description: Job updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Job'
+ *       400:
+ *         description: Missing required fields or job not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Missing required fields or job not found"
+ *       403:
+ *         description: Unauthorized to update the job
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "You do not have permission to update this job"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "An error occurred while updating the job"
+ */
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     UserActivityMetrics:
