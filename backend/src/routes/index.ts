@@ -11,7 +11,13 @@ import {
   updateUser,
   deleteUser,
 } from '../controllers/userController';
-import { getAllJobs, filterJobByStatus } from '../controllers/jobController';
+import {
+  getAllJobs,
+  filterJobByStatus,
+  postJobs,
+  retrieveJobs,
+  updateJob,
+} from '../controllers/jobController';
 import roleCheck from '../middlewares/roleCheck';
 import { Role } from '@prisma/client';
 import authMiddleware from '../middlewares/auth';
@@ -49,6 +55,14 @@ router.put('/user/:id', authMiddleware, roleCheck([Role.ADMIN]), updateUser);
 router.delete('/user/:id', authMiddleware, roleCheck([Role.ADMIN]), deleteUser);
 router.get('/jobs/all', authMiddleware, roleCheck([Role.ADMIN]), getAllJobs);
 router.get('/jobs', authMiddleware, roleCheck([Role.ADMIN]), filterJobByStatus);
+router.post('/job', authMiddleware, roleCheck([Role.CLIENT]), postJobs);
+router.get(
+  '/jobs/:clientId',
+  authMiddleware,
+  roleCheck([Role.CLIENT]),
+  retrieveJobs
+);
+router.put('/jobs/:id', authMiddleware, roleCheck([Role.CLIENT]), updateJob);
 router.post(
   '/artisan-profile',
   authMiddleware,
