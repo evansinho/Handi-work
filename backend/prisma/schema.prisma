@@ -91,6 +91,7 @@ model ArtisanProfile {
   available  Boolean    @default(true)
   ratingsAvg Decimal?   @db.Decimal(3, 2)
   verified   Boolean    @default(false)
+  location   String?    @db.VarChar(255)
 
   // Relations
   user     User       @relation("UserToArtisanProfile", fields: [userId], references: [id], onDelete: Cascade)
