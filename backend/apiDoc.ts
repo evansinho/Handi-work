@@ -792,6 +792,49 @@
 
 /**
  * @swagger
+ * /api/artisans:
+ *   get:
+ *     summary: Search for artisans based on filters
+ *     tags: [Artisan Profile]
+ *     parameters:
+ *       - in: query
+ *         name: location
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The location to filter artisans by
+ *       - in: query
+ *         name: skills
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Comma-separated list of skills to filter artisans by
+ *     responses:
+ *       200:
+ *         description: List of available artisans matching the filters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/ArtisanProfile'
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Server Error
+ */
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     PortfolioItem:

@@ -41,6 +41,7 @@ import {
   uploadPortfolioItem,
 } from '../controllers/portfolioItemController';
 import { fetchRatings, postRating } from '../controllers/ratingsController';
+import { searchArtisans } from '../controllers/artisanSearchController';
 
 const router = express.Router();
 const upload = multer({ storage: cloudinaryStorage });
@@ -63,6 +64,7 @@ router.get(
   retrieveJobs
 );
 router.put('/jobs/:id', authMiddleware, roleCheck([Role.CLIENT]), updateJob);
+router.get('/artisans', searchArtisans);
 router.post(
   '/artisan-profile',
   authMiddleware,
