@@ -5,6 +5,7 @@ import { app } from '../index';
 const prisma = new PrismaClient();
 
 beforeAll(async () => {
+  await prisma.message.deleteMany({});
   await prisma.job.deleteMany();
   await prisma.clientProfile.deleteMany();
   await prisma.user.deleteMany();
@@ -13,6 +14,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   try {
+    await prisma.message.deleteMany({});
     await prisma.clientProfile.deleteMany();
     await prisma.user.deleteMany();
     await prisma.job.deleteMany();
@@ -333,5 +335,29 @@ describe('Client Jobs API', () => {
     expect(response.body.error).toBe(
       'You do not have permission to update this job.'
     );
+  });
+
+  it('should update the job status successfully', async () => {
+    const job = await prisma.job.create({
+      data: {
+        clientId: anotherClientId,
+        title: 'Job to Update',
+        description: 'Job Description',
+        category: 'Graphic Design',
+        budgetMin: 100,
+        budgetMax: 200,
+        status: 'PENDING',
+        location: 'Online',
+      },
+    });
+    const response = await request(app)
+      .patch(`/api/job/${job.id}/status`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        status: 'ACTIVE',
+      });
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('status', 'ACTIVE');
   });
 });

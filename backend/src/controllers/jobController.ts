@@ -170,3 +170,41 @@ export const updateJob = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+// Client can update job status
+export const updateJobByStatus = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const job = await prisma.job.update({
+      where: { id },
+      data: { status },
+    });
+    return res.json(job);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Error updating job status' });
+  }
+};
+
+// client message artisan about job
+export const messageArtisan = async (req: Request, res: Response) => {
+  const { jobId } = req.params;
+  const { fromUserId, toUserId, message } = req.body;
+
+  try {
+    const newMessage = await prisma.message.create({
+      data: {
+        jobId,
+        fromUserId,
+        toUserId,
+        message,
+      },
+    });
+    return res.json(newMessage);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'Error sending message' });
+  }
+};
