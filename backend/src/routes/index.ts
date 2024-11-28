@@ -17,6 +17,8 @@ import {
   postJobs,
   retrieveJobs,
   updateJob,
+  updateJobByStatus,
+  messageArtisan,
 } from '../controllers/jobController';
 import roleCheck from '../middlewares/roleCheck';
 import { Role } from '@prisma/client';
@@ -64,6 +66,18 @@ router.get(
   retrieveJobs
 );
 router.put('/jobs/:id', authMiddleware, roleCheck([Role.CLIENT]), updateJob);
+router.patch(
+  '/job/:id/status',
+  authMiddleware,
+  roleCheck([Role.CLIENT]),
+  updateJobByStatus
+);
+router.post(
+  '/job/:jobId/message',
+  authMiddleware,
+  roleCheck([Role.CLIENT]),
+  messageArtisan
+);
 router.get('/artisans', searchArtisans);
 router.post(
   '/artisan-profile',

@@ -1269,6 +1269,142 @@
 
 /**
  * @swagger
+ * /api/job/{id}/status:
+ *   patch:
+ *     summary: Update the status of a job
+ *     tags: [Job]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the job to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [PENDING, ACTIVE, COMPLETED, DISPUTED]
+ *                 description: The new status of the job
+ *             example:
+ *               status: "ACTIVE"
+ *     responses:
+ *       200:
+ *         description: Job status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Job'
+ *       400:
+ *         description: Invalid job status or job not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid job status or job not found"
+ *       403:
+ *         description: Unauthorized to update the job status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "You do not have permission to update this job status"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "An error occurred while updating the job status"
+ */
+
+/**
+ * @swagger
+ * /api/job/{jobId}/message:
+ *   post:
+ *     summary: Send a message to the artisan assigned to a job
+ *     tags: [Job]
+ *     parameters:
+ *       - in: path
+ *         name: jobId
+ *         required: true
+ *         description: The ID of the job
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 description: The message to send to the artisan
+ *             example:
+ *               message: "Can we schedule a quick call to discuss details?"
+ *     responses:
+ *       200:
+ *         description: Message sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Message sent to the artisan"
+ *       400:
+ *         description: Invalid job ID or message content
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid job ID or message content"
+ *       403:
+ *         description: Unauthorized to send a message to the artisan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "You do not have permission to send a message to this artisan"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "An error occurred while sending the message"
+ */
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     UserActivityMetrics:

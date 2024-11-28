@@ -76,6 +76,8 @@ model User {
   ratingsReceived   Rating[]           @relation("RatingsReceived")
   notifications     Notification[]
   adminActivities   AdminActivity[]
+  messagesSent       Message[]          @relation("MessagesFrom")
+  messagesReceived   Message[]          @relation("MessagesTo")
 
   @@map("users")
 }
@@ -149,6 +151,7 @@ model Job {
   contracts Contract[]
   ratings   Rating[]
   payments  Payment[]
+  messages    Message[]
 
   @@map("jobs")
 }
@@ -235,6 +238,22 @@ model AdminActivity {
   admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
 
   @@map("admin_activities")
+}
+
+model Message {
+  id         String    @id @default(uuid()) @db.Uuid
+  jobId      String    @db.Uuid
+  fromUserId String    @db.Uuid
+  toUserId   String    @db.Uuid
+  message    String    @db.Text
+  createdAt  DateTime  @default(now()) @db.Timestamp(0)
+
+  // Relations
+  job      Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  fromUser User   @relation("MessagesFrom", fields: [fromUserId], references: [id])
+  toUser   User   @relation("MessagesTo", fields: [toUserId], references: [id])
+
+  @@map("messages")
 }
 
 model Notification {
