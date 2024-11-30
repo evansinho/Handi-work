@@ -1756,3 +1756,155 @@
  *                   type: string
  *                   example: Internal Server Error
  */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Payment:
+ *       type: object
+ *       required:
+ *         - jobId
+ *         - contractId
+ *         - amount
+ *         - currency
+ *         - paymentMethod
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The unique ID of the payment
+ *         jobId:
+ *           type: string
+ *           description: The ID of the associated job
+ *         contractId:
+ *           type: string
+ *           description: The ID of the associated contract
+ *         amount:
+ *           type: number
+ *           format: float
+ *           description: The payment amount
+ *         currency:
+ *           type: string
+ *           description: The currency for the payment
+ *         paymentMethod:
+ *           type: string
+ *           description: The method of payment
+ *         paymentStatus:
+ *           type: string
+ *           enum: [PENDING, PAID, ESCROW]
+ *           description: The status of the payment
+ *       example:
+ *         id: "b0fd4c93-5064-4e3e-8e04-e2ff0d76a093"
+ *         jobId: "job123"
+ *         contractId: "contract456"
+ *         amount: 100.00
+ *         currency: "USD"
+ *         paymentMethod: "CREDIT_CARD"
+ *         paymentStatus: "PENDING"
+ *
+ * /payment:
+ *   post:
+ *     summary: Create a new payment record
+ *     tags: [Payments]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Payment'
+ *     responses:
+ *       201:
+ *         description: Payment successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Payment'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ *
+ * /payment/{id}/process:
+ *   post:
+ *     summary: Process a payment
+ *     tags: [Payments]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique ID of the payment
+ *     responses:
+ *       200:
+ *         description: Payment successfully processed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Payment'
+ *       404:
+ *         description: Payment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Payment not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ *
+ * /payment/{id}:
+ *   get:
+ *     summary: Get payment details
+ *     tags: [Payments]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique ID of the payment
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved payment details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Payment'
+ *       404:
+ *         description: Payment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Payment not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ */
