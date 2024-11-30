@@ -44,6 +44,11 @@ import {
 } from '../controllers/portfolioItemController';
 import { fetchRatings, postRating } from '../controllers/ratingsController';
 import { searchArtisans } from '../controllers/artisanSearchController';
+import {
+  createPayment,
+  getPaymentDetails,
+  processPayment,
+} from '../controllers/paymentController';
 
 const router = express.Router();
 const upload = multer({ storage: cloudinaryStorage });
@@ -132,5 +137,8 @@ router.get(
 );
 router.post('/ratings', postRating);
 router.get('/ratings/:userId', fetchRatings);
+router.post('/payment', createPayment);
+router.post('/payment/:id/process', processPayment);
+router.get('/payment/:id', getPaymentDetails);
 
 export default router;
