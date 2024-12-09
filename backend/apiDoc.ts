@@ -1405,6 +1405,49 @@
 
 /**
  * @swagger
+ * /api/jobs/category:
+ *   get:
+ *     summary: Retrieve jobs by category
+ *     tags: [Job]
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Filter jobs by category (e.g., Web Development, Design)
+ *     responses:
+ *       200:
+ *         description: List of jobs filtered by category retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Job'
+ *       400:
+ *         description: Invalid category parameter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid category parameter
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while retrieving jobs by category
+ */
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     UserActivityMetrics:

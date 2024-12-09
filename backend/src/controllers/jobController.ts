@@ -208,3 +208,35 @@ export const messageArtisan = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Error sending message' });
   }
 };
+
+// Controller to fetch jobs by category
+export const getJobsByCategory = async (req: Request, res: Response) => {
+  const { category } = req.query;
+
+  try {
+    if (!category) {
+      return res.status(400).json({ error: 'Category is required' });
+    }
+
+    // Query the database for jobs matching the category
+    const jobs = await prisma.job.findMany({
+      where: {
+        category: String(category),
+      },
+      include: {
+        client: {
+          include: {
+            user: true,
+          },
+        },
+        proposals: true,
+        ratings: true,
+      },
+    });
+
+    res.json(jobs);
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
