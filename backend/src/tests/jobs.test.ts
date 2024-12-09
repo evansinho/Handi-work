@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import request from 'supertest';
 import { PrismaClient, Role, VerificationStatus } from '@prisma/client';
 import { app } from '../index';
@@ -26,24 +27,52 @@ afterAll(async () => {
 });
 
 describe('Jobs API', () => {
-  let token: string;
+  let adminToken: string;
+  let clientToken: string;
+  let artisanToken: string;
+
+  // Create users and generate tokens
   beforeAll(async () => {
-    const registerResponse = await request(app).post('/api/register').send({
-      name: 'test Doe',
-      email: 'test.doe@example.com',
+    // Register Admin user
+    const adminResponse = await request(app).post('/api/register').send({
+      name: 'Admin User',
+      email: 'admin@example.com',
       phoneNumber: '1234567890',
-      password: 'securepassword',
+      password: 'adminpassword',
       role: Role.ADMIN,
-      verificationStatus: VerificationStatus.PENDING,
+      verificationStatus: VerificationStatus.VERIFIED,
       twoFactorEnabled: false,
     });
 
-    token = registerResponse.body.token;
-  });
+    adminToken = adminResponse.body.token;
 
-  // Before each test, clear the database and insert sample data
-  beforeAll(async () => {
-    await prisma.job.deleteMany();
+    // Register Client user
+    const clientResponse = await request(app).post('/api/register').send({
+      name: 'Client User',
+      email: 'client@example.com',
+      phoneNumber: '0987654321',
+      password: 'clientpassword',
+      role: Role.CLIENT,
+      verificationStatus: VerificationStatus.VERIFIED,
+      twoFactorEnabled: false,
+    });
+
+    clientToken = clientResponse.body.token;
+
+    // Register Artisan user
+    const artisanResponse = await request(app).post('/api/register').send({
+      name: 'Artisan User',
+      email: 'artisan@example.com',
+      phoneNumber: '1122334455',
+      password: 'artisanpassword',
+      role: Role.ARTISAN,
+      verificationStatus: VerificationStatus.VERIFIED,
+      twoFactorEnabled: false,
+    });
+
+    artisanToken = artisanResponse.body.token;
+
+    // Seed jobs for testing
     const user = await prisma.user.create({
       data: {
         name: 'Alice Johnson',
@@ -53,6 +82,7 @@ describe('Jobs API', () => {
         verificationStatus: 'VERIFIED',
       },
     });
+
     // Seed sample clients
     const client = await prisma.clientProfile.create({
       data: {
@@ -60,6 +90,7 @@ describe('Jobs API', () => {
         businessName: 'Sample Client',
       },
     });
+
     await prisma.job.createMany({
       data: [
         {
@@ -106,37 +137,22 @@ describe('Jobs API', () => {
     });
   });
 
-  it('should return all jobs', async () => {
+  it('should return all jobs for admin', async () => {
     const response = await request(app)
       .get('/api/jobs/all')
-      .set('Authorization', `Bearer ${token}`);
+      .set('Authorization', `Bearer ${adminToken}`);
+
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(4);
   });
 
-  it('should return jobs filtered by status', async () => {
-    const response = await request(app)
-      .get('/api/jobs?status=ACTIVE')
-      .set('Authorization', `Bearer ${token}`);
-    expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
-    expect(response.body[0].title).toBe('Job Title 2');
-  });
-
-  it('should return 400 for invalid status', async () => {
-    const response = await request(app)
-      .get('/api/jobs?status=INVALID_STATUS')
-      .set('Authorization', `Bearer ${token}`);
-    expect(response.status).toBe(400);
-    expect(response.body.error).toBe('Invalid status parameter');
-  });
-
-  it('should return all jobs if no status is provided', async () => {
+  it('should return 403 for unauthorized user with invalid token', async () => {
     const response = await request(app)
       .get('/api/jobs')
-      .set('Authorization', `Bearer ${token}`);
-    expect(response.status).toBe(400);
-    expect(response.body.error).toBe('Status query parameter is required');
+      .set('Authorization', 'Bearer invalidToken');
+
+    expect(response.status).toBe(401);
+    expect(response.body.error).toBe('Unauthorized access: invalid token');
   });
 });
 

@@ -1,8 +1,18 @@
 import { Request, Response } from 'express';
 import { PrismaClient, JobStatus } from '@prisma/client';
 import { notifyArtisansAboutNewJob } from '../services/notifyArtisan';
+import Joi from 'joi';
 
 const prisma = new PrismaClient();
+
+// Joi schema for validating query parameters
+const querySchema = Joi.object({
+  category: Joi.string().optional(),
+  location: Joi.string().optional(),
+  status: Joi.string()
+    .valid('PENDING', 'ACTIVE', 'COMPLETED', 'DISPUTED')
+    .optional(),
+}).unknown(true);
 
 // Get all jobs for admin
 export const getAllJobs = async (req: Request, res: Response) => {
@@ -15,30 +25,46 @@ export const getAllJobs = async (req: Request, res: Response) => {
   }
 };
 
-// Filter jobs by status for admin
-export const filterJobByStatus = async (req: Request, res: Response) => {
+// Filter jobs by status,location or category for admin, client, and Artisan
+export const getJobs = async (req: Request, res: Response) => {
+  const { role } = req.user!;
+  const query = req.query;
+
+  // Validate query parameters
+  const { error, value: validatedQuery } = querySchema.validate(query);
+  if (error) return res.status(400).json({ error: error.message });
   try {
-    const status = req.query.status as string;
-    // Ensure status is provided and not empty
-    if (!status) {
-      return res
-        .status(400)
-        .json({ error: 'Status query parameter is required' });
+    let jobs;
+    // Admin: unrestricted access
+    if (role === 'ADMIN') {
+      jobs = await prisma.job.findMany({
+        where: {
+          category: validatedQuery.category || undefined,
+          location: validatedQuery.location || undefined,
+          status: validatedQuery.status || undefined,
+        },
+      });
     }
-    // Normalize status to uppercase (to handle case insensitivity)
-    const normalizedStatus = status.toUpperCase() as JobStatus;
-    // Validate if normalized status is a valid JobStatus enum value
-    if (!Object.values(JobStatus).includes(normalizedStatus)) {
-      return res.status(400).json({ error: 'Invalid status parameter' });
+    // Client: filters include Artisan Availability
+    else if (role === 'CLIENT') {
+      jobs = await prisma.job.findMany({
+        where: {
+          category: validatedQuery.category || undefined,
+          location: validatedQuery.location || undefined,
+          status: 'ACTIVE',
+        },
+      });
     }
-
-    const jobs = await prisma.job.findMany({
-      where: {
-        status: normalizedStatus,
-      },
-    });
-
-    res.json(jobs);
+    // Artisan: category and location filters only
+    else if (role === 'ARTISAN') {
+      jobs = await prisma.job.findMany({
+        where: {
+          category: validatedQuery.category || undefined,
+          location: validatedQuery.location || undefined,
+        },
+      });
+    }
+    return res.status(200).json({ jobs });
   } catch (error) {
     console.error('Error fetching jobs by status:', error);
     res.status(500).json({ error: 'Internal Server Error' });
