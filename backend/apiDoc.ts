@@ -1058,7 +1058,7 @@
  * @swagger
  * /api/jobs:
  *   get:
- *     summary: Retrieve jobs filtered by status
+ *     summary: Retrieve jobs with various filters (status, location, category, artisan availability)
  *     tags: [Job]
  *     parameters:
  *       - in: query
@@ -1067,6 +1067,22 @@
  *           type: string
  *           enum: [PENDING, ACTIVE, COMPLETED, DISPUTED]
  *         description: Filter jobs by status
+ *       - in: query
+ *         name: location
+ *         schema:
+ *           type: string
+ *         description: Filter jobs by location (e.g., city or region)
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Filter jobs by category (e.g., plumbing, electrical, etc.)
+ *       - in: query
+ *         name: artisanAvailability
+ *         schema:
+ *           type: string
+ *           enum: [AVAILABLE, UNAVAILABLE]
+ *         description: Filter jobs by artisan availability (relevant for clients)
  *     responses:
  *       200:
  *         description: List of filtered jobs retrieved successfully
@@ -1077,7 +1093,7 @@
  *               items:
  *                 $ref: '#/components/schemas/Job'
  *       400:
- *         description: Invalid status parameter
+ *         description: Invalid query parameter(s)
  *         content:
  *           application/json:
  *             schema:
@@ -1085,7 +1101,7 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: Invalid status parameter
+ *                   example: Invalid query parameters
  *       500:
  *         description: Server error
  *         content:
@@ -1095,7 +1111,7 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   example: An error occurred while retrieving jobs by status
+ *                   example: An error occurred while retrieving jobs
  */
 
 /**
@@ -1401,49 +1417,6 @@
  *                 message:
  *                   type: string
  *                   example: "An error occurred while sending the message"
- */
-
-/**
- * @swagger
- * /api/jobs/category:
- *   get:
- *     summary: Retrieve jobs by category
- *     tags: [Job]
- *     parameters:
- *       - in: query
- *         name: category
- *         schema:
- *           type: string
- *         description: Filter jobs by category (e.g., Web Development, Design)
- *     responses:
- *       200:
- *         description: List of jobs filtered by category retrieved successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Job'
- *       400:
- *         description: Invalid category parameter
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Invalid category parameter
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: An error occurred while retrieving jobs by category
  */
 
 /**

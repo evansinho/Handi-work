@@ -13,13 +13,13 @@ import {
 } from '../controllers/userController';
 import {
   getAllJobs,
-  filterJobByStatus,
   postJobs,
   retrieveJobs,
   updateJob,
   updateJobByStatus,
   messageArtisan,
   getJobsByCategory,
+  getJobs,
 } from '../controllers/jobController';
 import roleCheck from '../middlewares/roleCheck';
 import { Role } from '@prisma/client';
@@ -63,7 +63,12 @@ router.get('/user/:id', authMiddleware, roleCheck([Role.ADMIN]), getUserById);
 router.put('/user/:id', authMiddleware, roleCheck([Role.ADMIN]), updateUser);
 router.delete('/user/:id', authMiddleware, roleCheck([Role.ADMIN]), deleteUser);
 router.get('/jobs/all', authMiddleware, roleCheck([Role.ADMIN]), getAllJobs);
-router.get('/jobs', authMiddleware, roleCheck([Role.ADMIN]), filterJobByStatus);
+router.get(
+  '/jobs',
+  authMiddleware,
+  roleCheck([Role.ADMIN, Role.CLIENT, Role.ARTISAN]),
+  getJobs
+);
 router.get('/jobs/category', authMiddleware, getJobsByCategory);
 router.post('/job', authMiddleware, roleCheck([Role.CLIENT]), postJobs);
 router.get(
