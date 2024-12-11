@@ -50,6 +50,10 @@ import {
   getPaymentDetails,
   processPayment,
 } from '../controllers/paymentController';
+import {
+  getMessagesByJob,
+  getConversation,
+} from '../controllers/messageController';
 
 const router = express.Router();
 const upload = multer({ storage: cloudinaryStorage });
@@ -147,5 +151,9 @@ router.get('/ratings/:userId', fetchRatings);
 router.post('/payment', createPayment);
 router.post('/payment/:id/process', processPayment);
 router.get('/payment/:id', getPaymentDetails);
+// Get all messages for a specific job
+router.get('/message/job/:jobId', getMessagesByJob);
+// Get a conversation between two users
+router.get('/conversation/:fromUserId/:toUserId', getConversation);
 
 export default router;

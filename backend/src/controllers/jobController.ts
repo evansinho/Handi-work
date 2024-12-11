@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { PrismaClient, JobStatus } from '@prisma/client';
-import { notifyArtisansAboutNewJob } from '../services/notifyArtisan';
+import { PrismaClient } from '@prisma/client';
+import { notifyArtisansAboutNewJob } from '../middlewares/jobNotification';
 import Joi from 'joi';
+import { io } from '../services/socket';
 
 const prisma = new PrismaClient();
 
@@ -228,7 +229,17 @@ export const messageArtisan = async (req: Request, res: Response) => {
         message,
       },
     });
-    return res.json(newMessage);
+
+    // Broadcast the message via WebSocket
+    io.to(toUserId.toString()).emit('receiveMessage', {
+      jobId,
+      fromUserId,
+      toUserId,
+      message,
+      createdAt: newMessage.createdAt,
+    });
+
+    res.status(201).json({ message: 'Message sent', data: newMessage });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: 'Error sending message' });
