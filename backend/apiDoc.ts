@@ -1924,3 +1924,122 @@
  *                   type: string
  *                   example: Internal Server Error
  */
+
+/**
+ * @swagger
+ * /message/job/{jobId}:
+ *   get:
+ *     summary: Get all messages for a specific job
+ *     tags: [Messages]
+ *     parameters:
+ *       - in: path
+ *         name: jobId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the job
+ *     responses:
+ *       200:
+ *         description: A list of messages for the specified job
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: The message ID
+ *                       jobId:
+ *                         type: string
+ *                         description: The ID of the job
+ *                       fromUserId:
+ *                         type: string
+ *                         description: The ID of the sender
+ *                       toUserId:
+ *                         type: string
+ *                         description: The ID of the recipient
+ *                       message:
+ *                         type: string
+ *                         description: The message content
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Timestamp of message creation
+ *       500:
+ *         description: Failed to retrieve messages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
+ */
+
+/**
+ * @swagger
+ * /conversation/{fromUserId}/{toUserId}:
+ *   get:
+ *     summary: Get a conversation between two users
+ *     tags: [Messages]
+ *     parameters:
+ *       - in: path
+ *         name: fromUserId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the sender
+ *       - in: path
+ *         name: toUserId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the recipient
+ *     responses:
+ *       200:
+ *         description: A list of messages exchanged between the two users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: The message ID
+ *                       fromUserId:
+ *                         type: string
+ *                         description: The ID of the sender
+ *                       toUserId:
+ *                         type: string
+ *                         description: The ID of the recipient
+ *                       message:
+ *                         type: string
+ *                         description: The message content
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: Timestamp of message creation
+ *       500:
+ *         description: Failed to retrieve the conversation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                 details:
+ *                   type: string
+ */
