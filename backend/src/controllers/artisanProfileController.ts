@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, SkillLevel } from '@prisma/client';
 import { logAdminActivity } from '../utils/adminUtils';
 import { validate as isUUID } from 'uuid';
 
@@ -167,5 +167,50 @@ export const deleteArtisanProfile = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to delete artisan profile' });
+  }
+};
+
+//Create or Update Skill Level for an Artisan
+export const updateArtisanSkillLevel = async (req: Request, res: Response) => {
+  const artisanId = req.params.id;
+  const { skillLevel } = req.body;
+
+  if (!skillLevel || !Object.values(SkillLevel).includes(skillLevel)) {
+    return res.status(400).json({ error: 'Invalid skill level' });
+  }
+
+  try {
+    const updatedArtisan = await prisma.artisanProfile.update({
+      where: { id: artisanId },
+      data: { skillLevel },
+    });
+    return res.status(200).json(updatedArtisan);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error updating skill level' });
+  }
+};
+
+// Retrieve Skill Level for an Artisan
+export const retrieveArtisanSkillLevel = async (
+  req: Request,
+  res: Response
+) => {
+  const artisanId = req.params.id;
+
+  try {
+    const artisan = await prisma.artisanProfile.findUnique({
+      where: { id: artisanId },
+      select: { skillLevel: true },
+    });
+
+    if (!artisan) {
+      return res.status(404).json({ error: 'Artisan not found' });
+    }
+
+    return res.status(200).json(artisan);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error retrieving skill level' });
   }
 };

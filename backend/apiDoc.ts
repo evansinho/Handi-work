@@ -835,6 +835,122 @@
 
 /**
  * @swagger
+ * /artisan/{id}/skill-level:
+ *   post:
+ *     summary: Create or update the skill level for an artisan
+ *     tags: [Artisan Skill Levels]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the artisan
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               skillLevel:
+ *                 type: string
+ *                 enum: [Beginner, Intermediate, Expert]
+ *                 example: Intermediate
+ *     responses:
+ *       200:
+ *         description: The artisan's skill level was updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: "artisan123"
+ *                 skillLevel:
+ *                   type: string
+ *                   example: Intermediate
+ *       400:
+ *         description: Invalid skill level
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Invalid skill level
+ *       404:
+ *         description: Artisan not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Artisan not found
+ *       500:
+ *         description: Error updating skill level
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Error updating skill level
+ */
+
+/**
+ * @swagger
+ * /artisan/{id}/skill-level:
+ *   get:
+ *     summary: Retrieve the skill level of an artisan
+ *     tags: [Artisan Skill Levels]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the artisan
+ *     responses:
+ *       200:
+ *         description: The artisan's skill level
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 skillLevel:
+ *                   type: string
+ *                   example: Expert
+ *       404:
+ *         description: Artisan not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Artisan not found
+ *       500:
+ *         description: Error retrieving skill level
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Error retrieving skill level
+ */
+
+/**
+ * @swagger
  * components:
  *   schemas:
  *     PortfolioItem:
@@ -2042,4 +2158,150 @@
  *                   type: string
  *                 details:
  *                   type: string
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Category:
+ *       type: object
+ *       required:
+ *         - name
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The unique ID of the category
+ *         name:
+ *           type: string
+ *           description: The name of the category
+ *         description:
+ *           type: string
+ *           description: A brief description of the category
+ *       example:
+ *         id: "c1a2b3d4-e5f6-7g8h-9i0j-klmnopqrstu"
+ *         name: "Plumbing"
+ *         description: "Services related to plumbing tasks and maintenance"
+ *
+ * /categories:
+ *   post:
+ *     summary: Create a new category
+ *     tags: [Categories]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Category'
+ *     responses:
+ *       201:
+ *         description: Category successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ *   get:
+ *     summary: Retrieve a list of categories
+ *     tags: [Categories]
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved categories
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Category'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ *
+ * /categories/{id}:
+ *   get:
+ *     summary: Retrieve a category by ID
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique ID of the category
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the category
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Category'
+ *       404:
+ *         description: Category not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Category not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ *   delete:
+ *     summary: Delete a category by ID
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique ID of the category
+ *     responses:
+ *       204:
+ *         description: Category successfully deleted
+ *       404:
+ *         description: Category not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Category not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
  */
