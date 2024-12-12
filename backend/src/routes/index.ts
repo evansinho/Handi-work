@@ -31,6 +31,8 @@ import {
   getArtisanProfile,
   updateArtisanProfile,
   deleteArtisanProfile,
+  retrieveArtisanSkillLevel,
+  updateArtisanSkillLevel,
 } from '../controllers/artisanProfileController';
 import {
   getUserActivityMetrics,
@@ -54,6 +56,12 @@ import {
   getMessagesByJob,
   getConversation,
 } from '../controllers/messageController';
+import {
+  createCategory,
+  getCategories,
+  updateCategory,
+  deleteCategory,
+} from '../controllers/categoryController';
 
 const router = express.Router();
 const upload = multer({ storage: cloudinaryStorage });
@@ -131,6 +139,18 @@ router.post(
   roleCheck([Role.ADMIN]),
   rejectArtisanProfile
 );
+router.post(
+  '/artisan/:id/skill-level',
+  authMiddleware,
+  roleCheck([Role.ADMIN]),
+  updateArtisanSkillLevel
+);
+router.get(
+  '/artisan/:id/skill-level',
+  authMiddleware,
+  roleCheck([Role.ADMIN]),
+  retrieveArtisanSkillLevel
+);
 router.post('/portfolio', upload.single('image'), uploadPortfolioItem);
 router.get('/portfolio/:artisanId', getPortfolioItems);
 router.delete('/portfolio/:id', deletePortfolioItem);
@@ -155,5 +175,9 @@ router.get('/payment/:id', getPaymentDetails);
 router.get('/message/job/:jobId', getMessagesByJob);
 // Get a conversation between two users
 router.get('/conversation/:fromUserId/:toUserId', getConversation);
+router.post('/categories', createCategory);
+router.get('/categories', getCategories);
+router.put('/categories/:id', updateCategory);
+router.delete('/categories/:id', deleteCategory);
 
 export default router;
