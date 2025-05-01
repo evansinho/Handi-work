@@ -1,5 +1,7 @@
 # Handi-work
 
+Handi-Work is a platform that connects individuals and businesses with skilled workers for various tasks, ranging from home repairs to specialized trades. It intelligently matches job requests with qualified professionals based on skills, location, availability, and customer preferences, streamlining the process of finding reliable help for both short-term gigs and long-term contracts.
+
 ## Table of Contents
 
 - [Technologies](#technologies)
